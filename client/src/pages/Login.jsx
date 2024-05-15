@@ -25,8 +25,11 @@ const Login = () => {
             email, 
             password}).then((response) => {
                 if(response.data.status){
-                    navigate('/dashboard')
-                    alert("Login successful!")
+                    navigate('/dashboard');
+                    <div className='alert alert-success' role='alert'>
+                        Welcome!
+                        You have successfully logged in.
+                    </div>
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
                     //console.log("this is user",email,password)
@@ -55,16 +58,6 @@ const Login = () => {
                 onChange = {(e) => setPassword(e.target.value)}
                 required/>
                 
-
-                {/* <label htmlFor="check">Show Password</label>
-                <input
-                    id="check"
-                    type="checkbox"
-                    value={showPassword}
-                    onChange={() =>
-                        setShowPassword((prev) => !prev)
-                    }
-                /> */}
 
                 <p></p>
                 <button type="submit">Login</button>

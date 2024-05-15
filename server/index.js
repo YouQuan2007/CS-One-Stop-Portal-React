@@ -38,14 +38,21 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './files')
     },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() 
-      cb(null, uniqueSuffix + file.originalname)
+    filename: function (req, file, cb) { 
+      cb(null,file.originalname)
     }
   })
 
+  const storageforCompetition = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './competitions')
+    },
+    filename: function (req, file, cb) { 
+      cb(null,file.originalname)
+    }
+  });
 
-  //CRUD actions for resources
+//CRUD actions for resources
 
 import("./models/resourcesDetails.js");
 const resourcesDetailsSchema = new mongoose.Schema({ 
@@ -102,7 +109,7 @@ app.put('/update-files/:id', async(req, res) => {
         // const description = req.body.description;
         //console.log("hello", req.body);
         await resourcesSchema.findByIdAndUpdate({_id: req.body.id}, {title:req.body.title}).exec();
-        res.send({success:true, message: "Data has been updated"})
+        res.send({success:true, message: "Tile has been updated!"})
 
     }catch(err){
         res.status(500).json({error: "Internal Server Error"});
@@ -117,12 +124,89 @@ app.delete('/delete-files/:id', async(req, res) => {
     //console.log("hello this is id",id);
     try{
         resourcesSchema.findByIdAndDelete(id).exec();
-        res.status(200).json({status: "Data has been deleted"});
+        res.status(200).json({status: "Resources has been deleted!"});
     }catch(err){
         res.status(500).json({error: "Internal Server Error"});
         console.log(err);
     }
 
+})
+
+
+//CRUD actions for competitions
+import("./models/competitionDetails.js");
+const CompetitionDetailsSchema = new mongoose.Schema({
+    title: String,
+    file: String,
+    description: String,
+    uploadedDate: Date,
+
+});
+
+const uploadCompetition = multer({ storage: storageforCompetition })
+const competitionSchema = mongoose.model("competitionDetails", CompetitionDetailsSchema);
+app.post('/upload-competitions', uploadCompetition.single('file'), async(req, res) => {
+    //console.log(req.file);
+    const title = req.body.title;
+    const fileName= req.file.filename;
+    const description = req.body.description;
+    const uploadedDate = Date.now();
+    //console.log("This is date", uploadedDate);
+
+    try{
+        await competitionSchema.create({ 
+            title: title, 
+            file: fileName, 
+            uploadedDate: Date.now(),
+            description: description
+        
+        });
+        // console.log("File uploaded successfully!");
+        // console.log("Description is here", description);
+    }catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log(err);
+    }
+})
+
+app.get('/get-competitions', async(req, res) => {
+    
+   try{
+    competitionSchema.find({}).then((data) => {
+        res.status(200).json({ status: "Success", data: data});
+    });
+
+   }catch(err){
+       res.status(500).json({error: "Internal Server Error"});
+       console.log(err);
+   }
+})
+
+app.put('/update-competitions/:id', async(req, res) => {
+    try{
+        // const id = req.params.id;
+        // const title = req.body.title;
+        // const description = req.body.description;
+        //console.log("hello", req.body);
+        await competitionSchema.findByIdAndUpdate({_id: req.body.id}, {title:req.body.title}).exec();
+        res.send({success:true, message: "Competition title has been updated!"})
+
+    }catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log(err);
+    }
+})
+
+app.delete('/delete-competitions/:id', async(req, res) => {
+    const id = req.params.id;
+    //console.log("hello this is id",id);
+    try{
+        competitionSchema.findByIdAndDelete(id).exec();
+        res.status(200).json({status: "Competition has been deleted!"});
+    }catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log(err);
+    }
 })
 
 // Path: app.js
