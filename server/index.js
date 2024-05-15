@@ -236,6 +236,36 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+// Path for lecturers 
+import ("./models/Lecturers.js");
+
+const LecturersDetailsSchema = new mongoose.Schema({
+    userName: String,
+    email: String,
+    password: String,
+    role: String,
+});
+
+const Lecturers = mongoose.model("lecturersDetails", LecturersDetailsSchema);
+
+app.post("/register-as-Lecturers", async (req, res) => {
+
+    const { userName, email, password } = req.body;
+
+    try {
+        await Lecturers.create({ 
+            userName: userName, 
+            email: email, 
+            password: password,
+            role: "Lecturers" 
+        });
+        res.status(200).json({ status: "Registered" });
+    } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
+        console.log(err);
+    }
+});
+
 //CRUD action for competition
 
 import("./models/competitionDetails.js");
