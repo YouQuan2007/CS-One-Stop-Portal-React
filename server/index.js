@@ -18,6 +18,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use("/auth", userRouter);
 app.use("/files",express.static('files'));
+//app.use("/competitions",express.static('competitions'));
 
 const PORT = process.env.PORT || 5000;
 //const MONGO_URL = "mongodb://localhost:27017/authentication";
@@ -51,6 +52,17 @@ const storage = multer.diskStorage({
       cb(null,file.originalname)
     }
   });
+
+  const competitionFilter = (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if(allowedTypes.includes(file.mimetype)){
+      cb(null, true);
+    }
+    
+    else{
+        cb(null, false);
+      }
+  }
 
 //CRUD actions for resources
 
@@ -104,10 +116,6 @@ app.get('/get-files', async(req, res) => {
 app.put('/update-files/:id', async(req, res) => {
 
     try{
-        // const id = req.params.id;
-        // const title = req.body.title;
-        // const description = req.body.description;
-        //console.log("hello", req.body);
         await resourcesSchema.findByIdAndUpdate({_id: req.body.id}, {title:req.body.title}).exec();
         res.send({success:true, message: "Tile has been updated!"})
 
@@ -143,11 +151,11 @@ const CompetitionDetailsSchema = new mongoose.Schema({
 
 });
 
-const uploadCompetition = multer({ storage: storageforCompetition })
+const uploadCompetition = multer({ storage: storageforCompetition, fileFilter: competitionFilter})
 const competitionSchema = mongoose.model("competitionDetails", CompetitionDetailsSchema);
 app.post('/upload-competitions', uploadCompetition.single('file'), async(req, res) => {
     //console.log(req.file);
-    const title = req.body.title;
+    //const title = req.body.title;
     const fileName= req.file.filename;
     const description = req.body.description;
     const uploadedDate = Date.now();
@@ -155,7 +163,7 @@ app.post('/upload-competitions', uploadCompetition.single('file'), async(req, re
 
     try{
         await competitionSchema.create({ 
-            title: title, 
+            //title: title, 
             file: fileName, 
             uploadedDate: Date.now(),
             description: description
@@ -188,8 +196,8 @@ app.put('/update-competitions/:id', async(req, res) => {
         // const title = req.body.title;
         // const description = req.body.description;
         //console.log("hello", req.body);
-        await competitionSchema.findByIdAndUpdate({_id: req.body.id}, {title:req.body.title}).exec();
-        res.send({success:true, message: "Competition title has been updated!"})
+        await competitionSchema.findByIdAndUpdate({_id: req.body.id}, {description:req.body.description}).exec();
+        res.send({success:true, message: "Description has been updated!"})
 
     }catch(err){
         res.status(500).json({error: "Internal Server Error"});
@@ -264,15 +272,6 @@ app.post("/register-as-Lecturers", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
         console.log(err);
     }
-});
-
-//CRUD action for competition
-
-import("./models/competitionDetails.js");
-const competitionDetailsSchema = new mongoose.Schema({ 
-    title: String,
-    file: String,
-    description: String,
 });
 
 // Visits counter

@@ -28,6 +28,7 @@ const Login = () => {
             password}).then((response) => {
                 if(response.data.status){
                     navigate('/dashboard');
+                    alert("Login Successful!")
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
                     //console.log("this is user",email,password)
