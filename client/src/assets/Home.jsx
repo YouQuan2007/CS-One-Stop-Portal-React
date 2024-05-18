@@ -15,7 +15,7 @@ const Home = () => {
                 <h3>Total visits</h3>
                 <BsPeopleFill className='card_icon'/>
             </div>
-            <h1></h1>
+            <h1>120</h1>
         </div>
   
         <div className='card'>
@@ -23,7 +23,7 @@ const Home = () => {
                 <h3>Total pageviews</h3>
                 <BsPeopleFill className='card_icon'/>
             </div>
-            <h1></h1>
+            <h1>120</h1>
             </div>
         </div>
         

@@ -1,11 +1,10 @@
 //import React from 'react'
 import Axios from 'axios';
 import { useEffect, useState } from 'react'
-//import { useEffect } from 'react'
-//import Axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import DataTable from 'react-data-table-component';
 import { Form, InputGroup } from 'react-bootstrap';
+//import Card from 'react-bootstrap/Card'
 
 const Competitions = () => {
   const [file, setFile] = useState('')
@@ -34,7 +33,7 @@ const Competitions = () => {
         selector: 'uploadedDate',
         sortable: true,
         format: row => new Date(row.uploadedDate).toLocaleString().split(',')[0],
-        maxWidth: '20%',
+        maxWidth: '20%'
 
     },
     {
@@ -65,7 +64,6 @@ const fetchData = async () => {
 
   try{
     const result = await Axios.get('http://localhost:5000/get-competitions');
-    //console.log("This is result",result.data.data);
     setData(result.data.data);
 
   }catch(err){
@@ -76,13 +74,13 @@ const fetchData = async () => {
 };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("This is uploaded image", file)
-    console.log("This is description", description)
     const formData = new FormData();
     formData.append('file', file);
     formData.append('description', description);  
     
     alert("File uploaded successfully!");
+    localStorage.setItem('file', File);
+    localStorage.setItem('description', description);
     fetchData();
     const result = await Axios.post('http://localhost:5000/upload-competitions', formData, 
     {
@@ -106,6 +104,7 @@ const fetchData = async () => {
       .then((response) => {
         if(response.data.success){
           alert("Description has been updated!");
+          localStorage.setItem('description', newDescription);
           fetchData();
         }
       }).catch((err) => {
@@ -155,7 +154,7 @@ const fetchData = async () => {
     <InputGroup className='my-3'>
       <Form.Control 
       type="text" 
-      placeholder="Search by Title" 
+      placeholder="Search by Description" 
       onChange={e => setSearchTerm(e.target.value)}
       onSubmit={fetchData} />
     </InputGroup>
@@ -165,12 +164,35 @@ columns={columns}
 data={data.filter((item)=>{
   return searchTerm.toLowerCase() === ''
   ? item
-  : item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  : item.description.toLowerCase().includes(searchTerm.toLowerCase())
 })}
 pagination
 fixedHeader>
 </DataTable>
 
+{/* <Card 
+data={data.filter((item)=>{
+  return searchTerm.toLowerCase() === ''
+  ? item
+  : item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  })} >
+  <Card.Header as="h5">Competitions</Card.Header>
+  <p></p>
+    <Card>
+  <Card.Body>
+    <Card.Title> {file} </Card.Title>
+    <Card.Text>
+      {description}
+    </Card.Text>
+    <a href="" className="btn btn-primary" onClick={handleView}>View</a>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="" className="btn btn-warning" onClick={handleEdit}>Edit</a>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="" className="btn btn-danger" onClick={handleDelete}>Delete</a>
+  </Card.Body>
+    </Card>
+  <p></p>
+</Card> */}
 </div>
     </div>
     
