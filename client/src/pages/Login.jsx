@@ -22,33 +22,39 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        Axios.post('http://localhost:5000/auth/login', {
+        Axios.post('http://localhost:5000/auth1/login',{
             
             email, 
-            password}).then((response) => {
+            password,
+            }).then((response) => {
                 if(response.data.status){
-                    navigate('/dashboard');
+                    //toast.success("Login Successful!")
                     alert("Login Successful!")
+                    navigate('/dashboard');
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
-                    //console.log("this is user",email,password)
+                    //localStorage.setItem('role', response.data.status)
                 }
                 console.log(response)
             }).catch((err) => {
                 toast.error("Invalid email or password!")
-                console.log(err)
+                console.log("this is error",err)
             })  
 
     }
 
     const notify = () => {
-        
+        Axios.post('http://localhost:5000/auth1/login', {
+            email, 
+            password}).then(() => {
         if(email === '' || password === ''){
             toast.error("Please fill in all fields!")
+        
         } else {
             toast.success("Login Successful!")
         }
     }
+    )}
 
   return (
     <div className = 'sign-up-container'>

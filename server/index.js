@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 import { userRouter } from "./routes/user.js";
+import { lecturersRouter } from "./routes/lecturers.js";
 import multer from 'multer';
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use("/auth", userRouter);
+app.use("/auth1", lecturersRouter);
 app.use("/files",express.static('files'));
 //app.use("/competitions",express.static('competitions'));
 
@@ -192,10 +194,6 @@ app.get('/get-competitions', async(req, res) => {
 
 app.put('/update-competitions/:id', async(req, res) => {
     try{
-        // const id = req.params.id;
-        // const title = req.body.title;
-        // const description = req.body.description;
-        //console.log("hello", req.body);
         await competitionSchema.findByIdAndUpdate({_id: req.body.id}, {description:req.body.description}).exec();
         res.send({success:true, message: "Description has been updated!"})
 

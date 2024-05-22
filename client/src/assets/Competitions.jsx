@@ -7,7 +7,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 //import Card from 'react-bootstrap/Card'
 
 const Competitions = () => {
-  const [file, setFile] = useState('')
+  const [file, setFile] = useState([]);
   //const [image, setImage] = useState('')
   const [description, setDescription] = useState('')
   const [data, setData] = useState([])
@@ -79,7 +79,7 @@ const fetchData = async () => {
     formData.append('description', description);  
     
     alert("File uploaded successfully!");
-    localStorage.setItem('file', File);
+    localStorage.setItem('file', file);
     localStorage.setItem('description', description);
     fetchData();
     const result = await Axios.post('http://localhost:5000/upload-competitions', formData, 
@@ -91,7 +91,7 @@ const fetchData = async () => {
 }
 
   const handleView = row => {
-  // Handle view action
+  //Handle view action
   window.open(`http://localhost:5000/competitions/${row.file}`);
   };
 
@@ -131,9 +131,9 @@ const fetchData = async () => {
     <div className = 'competition-container'>
     <form className = 'sign-up-form' onSubmit={handleSubmit}>
                 <h2>Upload competitions</h2>
-                <label htmlFor="image">Select file: (ONLY IMAGES are accepted)</label>
+                <label htmlFor="file">Select file: (ONLY IMAGES are accepted)</label>
                 <input type="file" 
-                className="form-control" accept="application/image"
+                className="form-control" accept="application/image/*"
                 onChange= {(e) => setFile(e.target.files[0])}
                 autoComplete="off" required/>
 

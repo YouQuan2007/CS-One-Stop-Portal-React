@@ -1,25 +1,26 @@
 import express from "express";
 import bcrypt from "bcrypt";
 const router = express.Router();
-import { User } from "../models/User.js";
+//import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { Lecturers } from "../models/Lecturers.js";
 
-router.post("/signup", async (req, res) => {
+router.post("/register-as-Lecturers", async (req, res) => {
     const { username, email, password } = req.body;
-    const user = await User.findOne({email})
+    const user = await Lecturers.findOne({email})
     if(user){
         return res.status(400).json({error: "User already exists!"})
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
+    const newUser = new Lecturers({
         userName: username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: "Lecturers"
     })
-    //console.log("hello 123",newUser)
+    
 
     await newUser.save()
     return res.json({status:true, message: "User created successfully!"})
@@ -28,9 +29,9 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({email})
-    const userLecturers = await Lecturers.findOne({email})
-    if(!user || !userLecturers){
+    const user = await Lecturers.findOne({email})
+    //const userLecturers = await Lecturers.findOne({email})
+    if(!user){
         return res.status(400).json({error: "User does not exist!"})
     }
 
@@ -43,7 +44,7 @@ router.post("/login", async (req, res) => {
         username: user.userName, 
         email: user.email}, process.env.JWT_SECRET, {expiresIn: "7d"})
         res.cookie("token", token, {maxAge: 1000*60*60*24*7, httpOnly: true})
-        return res.json({status: true, message: "User logged in successfully!"})
+        return res.json({status: true, message: "User logged in successfully!", role: user.role})
 
 })
 
@@ -53,7 +54,7 @@ router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
     try {
 
-        const user = await User.findOne({email})
+        const user = await Lecturers.findOne({email})
         if(!user)
         {
             return res.status(400).json({error: "User does not exist!"})
@@ -99,7 +100,7 @@ router.post("/reset-password/:token", async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const id = decoded.id;
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.findByIdAndUpdate({_id:id}, {password: hashedPassword})
+        await Lecturers.findByIdAndUpdate({_id:id}, {password: hashedPassword})
         return res.json({status: true, message: "Password reset successfully!"})
     } catch (error) {
         console.log(error);
@@ -107,4 +108,4 @@ router.post("/reset-password/:token", async (req, res) => {
     }
 })
 
-export {router as userRouter}
+export {router as lecturersRouter}

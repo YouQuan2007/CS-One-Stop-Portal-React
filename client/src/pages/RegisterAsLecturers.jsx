@@ -14,7 +14,7 @@ const RegisterAsLecturers = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        Axios.post('http://localhost:5000/register-as-Lecturers', {
+        Axios.post('http://localhost:5000/auth1/register-as-Lecturers', {
             username, 
             email, 
             password,
