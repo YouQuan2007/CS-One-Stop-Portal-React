@@ -26,6 +26,7 @@ const ForgotPassword = () => {
                 }
                 console.log(response.data)
             }).catch((err) => {
+                alert("Email does not exist!")
                 console.log(err)
             })  
 
@@ -45,6 +46,7 @@ const ForgotPassword = () => {
                 <input type="email" placeholder="Email" 
                 onChange = {(e) => setEmail(e.target.value)}
                 autoComplete="off" required/>
+                <p></p>
         <button type="submit">Send Reset Password Link</button>
         </form>
     </div>
