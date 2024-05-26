@@ -114,7 +114,7 @@ const handleEdit = row => {
     {id: row._id, title: newTitle})
     .then((response) => {
       if(response.data.success){
-        alert("Data has been updated!");
+        alert("Title has been updated!");
         fetchData();
       }
     }).catch((err) => {

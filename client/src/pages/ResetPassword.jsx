@@ -47,7 +47,7 @@ const ResetPassword = () => {
                 onChange = {(e) => setPassword(e.target.value)}
                 required/>
 
-
+        <p></p>
         <button type="submit">Reset</button>
         </form>
     </div>

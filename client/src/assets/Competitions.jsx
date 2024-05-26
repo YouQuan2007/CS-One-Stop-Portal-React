@@ -92,7 +92,7 @@ const fetchData = async () => {
 
   const handleView = row => {
   //Handle view action
-  window.open(`http://localhost:5000/competitions/${row.file}`);
+   window.open(`http://localhost:5000/competitions/${row.file}`);
   };
 
   const handleEdit = row => {
