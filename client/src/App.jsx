@@ -14,7 +14,7 @@ import ListofResources from './pages/ListofResources'
 import SettingPage from './pages/SettingPage'
 import ResetPassword from './pages/ResetPassword'
 import RegisterAsLecturers from './pages/RegisterAsLecturers'
-import RegisterAsStaff from './pages/RegisterAsStaff'
+//import RegisterAsStaff from './pages/RegisterAsStaff'
 import RegisterAsStudent from './pages/RegisterAsStudent'
 //import Sidebar from './assets/Sidebar'
 
@@ -50,9 +50,6 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/setting" element={<SettingPage/>} />
-      </Routes>
-      <Routes>
-        <Route path="/registerasStaff" element={<RegisterAsStaff/>} />
       </Routes>
       <Routes>
         <Route path="/registerasLecturers" element={<RegisterAsLecturers/>} />

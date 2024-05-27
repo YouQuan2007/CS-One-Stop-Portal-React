@@ -54,8 +54,6 @@ const SignUp = () => {
                 <p>Already have an account? <Link to ="/login">Login here!</Link></p>
                 <Link to ="/registerasLecturers">Register as lecturers</Link>
                 <p></p>
-                <Link to ="/registerasStaffs">Register as staffs</Link>
-                <p></p>
                 <Link to ="/registerasStudent">Register as student</Link>
             </form>
 
