@@ -33,8 +33,6 @@ const Resources = () => {
           name: 'Uploaded Date',
           selector: 'uploadedDate',
           sortable: true,
-          //format: row => new Date(row.date).toLocaleString(),
-          //format: row => new Date(row.uploadedDate).toLocaleString().split(',')[0],
           format: row => new Date(row.uploadedDate).toLocaleString().split(',')[0],
           maxWidth: '20%',
 
@@ -69,7 +67,7 @@ const Resources = () => {
 
     try{
       const result = await Axios.get('http://localhost:5000/get-files');
-      setData(result.data.data);
+      setData(()=>result.data.data);
 
     }catch(err){
       console.log("Hello this is error",err);
@@ -78,28 +76,34 @@ const Resources = () => {
 
   };
 
-  // const handleDataUpload = (uploadedData) => {
-  //   setData(uploadedData);
-  //   setKey((prevKey) => prevKey + 1); //Increment key to force reinitialization of the component
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("hello", title, file);
     const formData = new FormData();
     formData.append('title', title);
     formData.append('file', file);
-    
-    alert("File uploaded successfully!");
-    fetchData();
-    const result = await Axios.post('http://localhost:5000/upload-files', formData, 
-    {
-      headers: { 'Content-Type': 'multipart/form-data'},
-    });
-    
-    console.log(result);
-      
-
-}
+    formData.append('fileName', file.name);
+    // alert("File uploaded successfully!");
+  
+    try {
+      const result = await Axios.post('http://localhost:5000/upload-files', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
+      if (result.status === 200) {
+        alert(result.data.message); // Display the success message from the backend
+  
+        // Fetch the updated list of files from the backend
+        const updatedFiles = await Axios.get('http://localhost:5000/get-files');
+  
+        // Update the frontend state or data structure with the updated list of files
+        setData(updatedFiles.data.data);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
 
 const handleView = row => {
   // Handle view action
@@ -130,6 +134,7 @@ const handleDelete = row => {
     if(response.data.status){
       alert("Data has been deleted!");
       fetchData();
+      console.log("this is response", response);
     }
   }).catch((err) => {
     console.log(err);
@@ -176,8 +181,8 @@ const handleDelete = row => {
       columns={columns} 
       data={data.filter((item)=>{
         return searchTerm.toLowerCase() === ''
-        ? item
-        : item.title.toLowerCase().includes(searchTerm.toLowerCase())
+          ? item
+          : item.title.toLowerCase().includes(searchTerm.toLowerCase())
       })}
       pagination
       fixedHeader>

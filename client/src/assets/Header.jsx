@@ -1,5 +1,5 @@
 //import React from 'react'
-import { BsFillBellFill,BsPersonCircle,BsJustify, BsArrowBarRight } from 'react-icons/bs'
+import { BsFillBellFill,BsJustify, BsArrowBarRight } from 'react-icons/bs'
 //import { Button } from 'react-bootstrap';
 
 const handleLogout = () => {
@@ -14,9 +14,7 @@ const handleNotification = () => {
   //Need to implement new function lagi, not completed yet
 }
 
-const handleProfile = () => {
 
-}
 
 const Header = () => {
 
@@ -35,8 +33,6 @@ const Header = () => {
         </div>
         <div className='header-right'>
             <BsFillBellFill className='icon'onClick={handleNotification}/>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <BsPersonCircle className='icon'onClick ={handleProfile}/>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <BsArrowBarRight className='icon' onClick={handleLogout} />
             &nbsp;&nbsp;&nbsp;&nbsp;

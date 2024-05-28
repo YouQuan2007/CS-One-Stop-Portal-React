@@ -76,31 +76,30 @@ const resourcesDetailsSchema = new mongoose.Schema({
     uploadedDate: Date,
 });
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 const resourcesSchema = mongoose.model("resourcesDetails", resourcesDetailsSchema);
-app.post('/upload-files', upload.single('file'), async(req, res) => {
-    //console.log(req.file);
-    const title = req.body.title;
-    const fileName= req.file.filename;
-    //const description = req.body.description;
-    const uploadedDate = Date.now();
-    //console.log("This is date", uploadedDate);
 
-    try{
-        await resourcesSchema.create({ 
-            title: title, 
-            file: fileName, 
-            uploadedDate: Date.now(),
-            //description: description
-        
-        });
-        // console.log("File uploaded successfully!");
-        // console.log("Description is here", description);
-    }catch(err){
-        res.status(500).json({error: "Internal Server Error"});
-        console.log(err);
-    }
-})
+app.post('/upload-files', upload.single('file'), async (req, res) => {
+  try {
+    console.log(req.body); // Log the request body
+    console.log(req.file); // Log the uploaded file data
+
+    const title = req.body.title;
+    const file = req.file.originalname; // Access the file name
+    const uploadedDate = Date.now();
+
+    await resourcesSchema.create({
+      title: title,
+      file: file,
+      uploadedDate: Date.now(),
+    });
+
+    res.status(200).json({ message: 'File uploaded successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+    console.log(err);
+  }
+});
 
 app.get('/get-files', async(req, res) => {
 
