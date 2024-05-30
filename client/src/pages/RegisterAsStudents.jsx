@@ -1,11 +1,10 @@
-//import React
 import { useState } from 'react'
 import '../App.css'
 import Axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.png'
 
-const SignUp = () => {
+const RegisterAsStudents = () => {
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -15,17 +14,18 @@ const SignUp = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        Axios.post('http://localhost:5000/auth/signup', {
+        Axios.post('http://localhost:5000/auth2/register-as-Students', {
             username, 
             email, 
-            password}).then((response) => {
+            password,
+            }).then((response) => {
                 if(response.data.status){
-                    navigate('/login')
+                    navigate('/loginasstudents')
                     alert("Sign up successful!")
                 }
                 console.log(response)
             }).catch((err) => {
-                console.log(err)
+                console.log("this is",err)
             })  
 
     }
@@ -33,7 +33,7 @@ const SignUp = () => {
     <div className = 'sign-up-container'>
         <img src={logo}/>
         <h1>CS One Stop Portal</h1>
-        <h2>Sign Up</h2>
+        <h2>Sign Up as Students</h2>
             <form className = 'sign-up-form' onSubmit={handleSubmit}>
                 <label htmlFor="username">Username:</label>
                 <input type="text" placeholder="Username" 
@@ -52,9 +52,6 @@ const SignUp = () => {
                 <p></p>
                 <button type="submit">Sign Up</button>
                 <p>Already have an account? <Link to ="/login">Login here!</Link></p>
-                <Link to ="/registerasLecturers">Register as lecturers</Link>
-                <p></p>
-                <Link to ="/registerasStudents">Register as student</Link>
             </form>
 
     </div>
@@ -62,4 +59,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default RegisterAsStudents

@@ -7,6 +7,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 //import router from './'
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
+import LoginAsStudents from './pages/LoginAsStudents'
 import Dashboard from './pages/Dashboard'
 import ForgotPassword from './pages/ForgotPassword'
 import ListofCompetitions from './pages/ListofCompetitions'
@@ -15,7 +16,7 @@ import SettingPage from './pages/SettingPage'
 import ResetPassword from './pages/ResetPassword'
 import RegisterAsLecturers from './pages/RegisterAsLecturers'
 //import RegisterAsStaff from './pages/RegisterAsStaff'
-import RegisterAsStudent from './pages/RegisterAsStudent'
+import RegisterAsStudents from './pages/RegisterAsStudents'
 //import Sidebar from './assets/Sidebar'
 
 function App() {
@@ -43,6 +44,9 @@ function App() {
         <Route path="/login" element={<Login/>} />
       </Routes>
       <Routes>
+        <Route path="/loginasstudents" element={<LoginAsStudents/>} />
+      </Routes>
+      <Routes>
         <Route path="/forgotPassword" element={<ForgotPassword/>} />
       </Routes>
       <Routes>
@@ -55,7 +59,7 @@ function App() {
         <Route path="/registerasLecturers" element={<RegisterAsLecturers/>} />
       </Routes>
       <Routes>
-        <Route path="/registerasStudent" element={<RegisterAsStudent/>} />
+        <Route path="/registerasStudents" element={<RegisterAsStudents/>} />
       </Routes>
     </BrowserRouter>
   )

@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 import { userRouter } from "./routes/user.js";
 import { lecturersRouter } from "./routes/lecturers.js";
+import { studentsRouter } from "./routes/students.js";
 import multer from 'multer';
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use("/auth", userRouter);
 app.use("/auth1", lecturersRouter);
+app.use("/auth2", studentsRouter);
 app.use("/files",express.static('files'));
 //app.use("/competitions",express.static('competitions'));
 
@@ -263,6 +265,36 @@ app.post("/register-as-Lecturers", async (req, res) => {
             email: email, 
             password: password,
             role: "Lecturers" 
+        });
+        res.status(200).json({ status: "Registered" });
+    } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
+        console.log(err);
+    }
+});
+
+// Path for Students 
+import ("./models/Students.js");
+
+const StudentsDetailsSchema = new mongoose.Schema({
+    userName: String,
+    email: String,
+    password: String,
+    role: String,
+});
+
+const Students = mongoose.model("studentsDetails", StudentsDetailsSchema);
+
+app.post("/register-as-Students", async (req, res) => {
+
+    const { userName, email, password } = req.body;
+
+    try {
+        await Students.create({ 
+            userName: userName, 
+            email: email, 
+            password: password,
+            role: "Students" 
         });
         res.status(200).json({ status: "Registered" });
     } catch (err) {
