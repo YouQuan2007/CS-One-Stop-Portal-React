@@ -44,7 +44,7 @@ const LoginAsStudents = () => {
     }
 
     const notify = () => {
-        Axios.post('http://localhost:5000/auth2/login', {
+        Axios.post('http://localhost:5000/auth2/login-as-students', {
             email, 
             password}).then(() => {
         if(email === '' || password === ''){
