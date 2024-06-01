@@ -30,7 +30,7 @@ const LoginAsStudents = () => {
                 if(response.data.status){
                     //toast.success("Login Successful!")
                     alert("Login Successful!")
-                    navigate('/dashboard');
+                    navigate('/dashboardforstudents');
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
                     //localStorage.setItem('role', response.data.status)

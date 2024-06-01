@@ -17,19 +17,26 @@ import ResetPassword from './pages/ResetPassword'
 import RegisterAsLecturers from './pages/RegisterAsLecturers'
 //import RegisterAsStaff from './pages/RegisterAsStaff'
 import RegisterAsStudents from './pages/RegisterAsStudents'
+import DashboardforStudents from './pages/DashboardforStudents'
 //import Sidebar from './assets/Sidebar'
 
 function App() {
   //const [count, setCount] = useState(0)
+  // 05.31 update:
+  // The default login page changed to loginasstuents first, after siap students punya thing
+  // need to change back to lecturer side
 
   return (
 
     <BrowserRouter>
     <Routes>
-        <Route path="/" element={<Login/>} />
+        <Route path="/" element={<LoginAsStudents/>} />
       </Routes>
       <Routes>
         <Route path="/dashboard" element={<Dashboard/>} />
+      </Routes>
+      <Routes>
+        <Route path ="/dashboardforstudents" element = {<DashboardforStudents/>} />
       </Routes>
       <Routes>
         <Route path="/listofcompetitions" element={<ListofCompetitions/>} />
