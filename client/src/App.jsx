@@ -18,6 +18,8 @@ import RegisterAsLecturers from './pages/RegisterAsLecturers'
 //import RegisterAsStaff from './pages/RegisterAsStaff'
 import RegisterAsStudents from './pages/RegisterAsStudents'
 import DashboardforStudents from './pages/DashboardforStudents'
+import ListofResourcesforStudents from './pages/ListofResourcesforStudents'
+import ListofCompetitionsforStudents from './pages/ListofCompetitionsforStudents'
 //import Sidebar from './assets/Sidebar'
 
 function App() {
@@ -30,7 +32,7 @@ function App() {
 
     <BrowserRouter>
     <Routes>
-        <Route path="/" element={<LoginAsStudents/>} />
+        <Route path="/" element={<Login/>} />
       </Routes>
       <Routes>
         <Route path="/dashboard" element={<Dashboard/>} />
@@ -43,6 +45,12 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/listofresources" element={<ListofResources/>} />
+      </Routes>
+      <Routes>
+        <Route path = "/listofresources/students" element={<ListofResourcesforStudents/>}/>
+      </Routes>
+      <Routes>
+        <Route path="/listofcompetitions/students" element={<ListofCompetitionsforStudents/>} />
       </Routes>
       <Routes>
         <Route path="/signup" element={<SignUp/>} />
