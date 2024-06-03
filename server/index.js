@@ -22,6 +22,7 @@ app.use("/auth", userRouter);
 app.use("/auth1", lecturersRouter);
 app.use("/auth2", studentsRouter);
 app.use("/files",express.static('files'));
+app.use("/competitions",express.static('competitions'))
 //app.use("/competitions",express.static('competitions'));
 
 const PORT = process.env.PORT || 5000;
