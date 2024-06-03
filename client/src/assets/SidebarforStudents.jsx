@@ -23,13 +23,13 @@ const SidebarforStudents = () => {
                 <p></p>
             </li>
             <li className='sidebar-list-item'>
-                <a href='listofresources/students'>
+                <a href='listofresources-students'>
                     <BsClipboardDataFill className='icon'/>&nbsp; List of resources
                 </a>
                 <p></p>
             </li>
             <li className='sidebar-list-item'>
-                <a href='listofcompetitions/students'>
+                <a href='listofcompetitions-students'>
                     <BsClipboardDataFill className='icon'/>&nbsp; List of competitions
                 </a>
             </li>

@@ -47,10 +47,10 @@ function App() {
         <Route path="/listofresources" element={<ListofResources/>} />
       </Routes>
       <Routes>
-        <Route path = "/listofresources/students" element={<ListofResourcesforStudents/>}/>
+        <Route path = "/listofresources-students" element={<ListofResourcesforStudents/>}/>
       </Routes>
       <Routes>
-        <Route path="/listofcompetitions/students" element={<ListofCompetitionsforStudents/>} />
+        <Route path="/listofcompetitions-students" element={<ListofCompetitionsforStudents/>} />
       </Routes>
       <Routes>
         <Route path="/signup" element={<SignUp/>} />
