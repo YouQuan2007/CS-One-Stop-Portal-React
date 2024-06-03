@@ -64,7 +64,7 @@ const fetchData = async () => {
 
   try{
     const result = await Axios.get('http://localhost:5000/get-competitions');
-    setData(result.data.data);
+    setData(()=>result.data.data);
 
   }catch(err){
     console.log("Hello this is error",err);
@@ -78,16 +78,24 @@ const fetchData = async () => {
     formData.append('file', file);
     formData.append('description', description);  
     
-    alert("File uploaded successfully!");
-    localStorage.setItem('file', file);
-    localStorage.setItem('description', description);
-    fetchData();
-    const result = await Axios.post('http://localhost:5000/upload-competitions', formData, 
-    {
-      headers: { 'Content-Type': 'multipart/form-data'},
-    });
-    
-    console.log(result);
+    //alert("File uploaded successfully!");
+    try {
+      const result = await Axios.post('http://localhost:5000/upload-competitions', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
+      if (result.status === 200) {
+        alert(result.data.message); // Display the success message from the backend
+  
+        // Fetch the updated list of files from the backend
+        const updatedFiles = await Axios.get('http://localhost:5000/get-competitions');
+  
+        // Update the frontend state or data structure with the updated list of files
+        setData(updatedFiles.data.data);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
 }
 
   const handleView = row => {

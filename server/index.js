@@ -158,14 +158,14 @@ const CompetitionDetailsSchema = new mongoose.Schema({
 const uploadCompetition = multer({ storage: storageforCompetition, fileFilter: competitionFilter})
 const competitionSchema = mongoose.model("competitionDetails", CompetitionDetailsSchema);
 app.post('/upload-competitions', uploadCompetition.single('file'), async(req, res) => {
-    //console.log(req.file);
-    //const title = req.body.title;
-    const fileName= req.file.filename;
-    const description = req.body.description;
-    const uploadedDate = Date.now();
-    //console.log("This is date", uploadedDate);
 
     try{
+        console.log(req.body);
+        console.log(req.file);
+        const fileName= req.file.filename;
+        const description = req.body.description;
+        const uploadedDate = Date.now();
+
         await competitionSchema.create({ 
             //title: title, 
             file: fileName, 
@@ -173,8 +173,7 @@ app.post('/upload-competitions', uploadCompetition.single('file'), async(req, re
             description: description
         
         });
-        // console.log("File uploaded successfully!");
-        // console.log("Description is here", description);
+        res.status(200).json({message: "File uploaded successfully!"});
     }catch(err){
         res.status(500).json({error: "Internal Server Error"});
         console.log(err);
