@@ -5,6 +5,10 @@ const ResourcesDetailsSchema = new mongoose.Schema({
     title: { type: String, required: true },
     file: { type: String, required: true },
     uploadedDate: { type: Date, default: Date.now },
+    permittedUsers: {
+        type: [String],
+        default: []
+    } // List of user emails or IDs
     //description: { type: String, required: true },
 },
 {

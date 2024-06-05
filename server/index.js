@@ -97,7 +97,7 @@ app.post('/upload-files', upload.single('file'), async (req, res) => {
       uploadedDate: Date.now(),
     });
 
-    res.status(200).json({ message: 'File uploaded successfully' });
+    res.status(200).json({ message: 'File uploaded successfully!' });
   } catch (err) {
     res.status(500).json({ error: 'Internal Server Error' });
     console.log(err);
@@ -143,6 +143,74 @@ app.delete('/delete-files/:id', async(req, res) => {
     }
 
 })
+
+
+//Actions for granting and removing access
+//Grant access
+app.put('/grant-access/:id', async(req,res) => {
+
+    const {id} = req.params;
+    const {email} = req.body;
+
+    try{
+        const resource = await resourcesSchema.findById(id);
+
+        if (!resource) {
+            return res.status(404).json({ error: "Resource not found" });
+        }
+
+        if (!Array.isArray(resource.permittedUsers)) {
+            resource.permittedUsers = [];
+        }
+        
+        if(!resource.permittedUsers.includes(email)){
+            resource.permittedUsers.push(email);
+            await resource.save();
+            
+
+    } 
+    res.status(200).json({status: "Access has been granted!"});
+    
+    }catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log("This is error for access",err);
+    }
+});
+
+
+//Remove access
+app.put('/remove-access/:id', async(req,res) => {
+
+    const {id} = req.params;
+    const {email} = req.body;
+
+    try{
+        const resource = await resourcesSchema.findById(id);
+        if(resource.permittedUsers.includes(email)){
+            resource.permittedUsers = resource.permittedUsers.filter((user) => user !== email);
+            await resource.save();
+    } 
+    res.status(200).json({status: "Access has been removed!"});
+    
+    }catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log(err);
+    }
+});
+
+//Get files filtered by access
+app.get('/get-files/:email', async(req, res) => {
+    const {email}= req.params;
+    try{
+        const resources = await resourcesSchema.find({permittedUsers: email});
+        res.status(200).json({status: "Success", data: resources});
+    }   catch(err){
+        res.status(500).json({error: "Internal Server Error"});
+        console.log(err);
+    }
+
+
+});
 
 
 //CRUD actions for competitions

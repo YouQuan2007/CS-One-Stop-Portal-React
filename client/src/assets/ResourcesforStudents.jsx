@@ -80,9 +80,11 @@ const handleView = row => {
 
 
   return (
-    <>    
+    <> 
+      
     <div className="competition-container">
       <div className="w-70">
+        
         <Form>
           <InputGroup className='my-3'>
             <Form.Control 
@@ -105,6 +107,7 @@ const handleView = row => {
       
       </div>
     </div>
+    
     </>  
   )
 }
