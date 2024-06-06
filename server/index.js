@@ -30,22 +30,16 @@ app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const __dirname = path.resolve();
-
-
 app.use("/auth", userRouter);
 app.use("/auth1", lecturersRouter);
 app.use("/auth2", studentsRouter);
 app.use("/files",express.static('files'));
 app.use("/competitions",express.static('competitions'))
+const __dirname = path.resolve();
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
-app.get('*', (req, res) => {
 
-    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-
-})
 //app.use("/competitions",express.static('competitions'));
 
 
