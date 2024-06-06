@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 dotenv.config();
 import { userRouter } from "./routes/user.js";
 import { lecturersRouter } from "./routes/lecturers.js";
@@ -18,12 +19,6 @@ app.use(cors({
     credentials: true,
 }));
 app.use(cookieParser());
-app.use("/auth", userRouter);
-app.use("/auth1", lecturersRouter);
-app.use("/auth2", studentsRouter);
-app.use("/files",express.static('files'));
-app.use("/competitions",express.static('competitions'))
-//app.use("/competitions",express.static('competitions'));
 
 const PORT = process.env.PORT || 5000;
 //const MONGO_URL = "mongodb://localhost:27017/authentication";
@@ -34,6 +29,24 @@ app.listen(process.env.PORT, () => {
     console.log("Connected to MongoDB");
     console.log(`Server is running on port ${PORT}`);
 });
+
+const __dirname = path.resolve();
+
+
+app.use("/auth", userRouter);
+app.use("/auth1", lecturersRouter);
+app.use("/auth2", studentsRouter);
+app.use("/files",express.static('files'));
+app.use("/competitions",express.static('competitions'))
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+
+})
+//app.use("/competitions",express.static('competitions'));
 
 
 //Multer: to store files in the server

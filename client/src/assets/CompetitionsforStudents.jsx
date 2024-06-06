@@ -81,6 +81,7 @@ const fetchData = async () => {
 
   return (
     <>
+    <main className='main-container'>
     <div className = "resources-container">
     <div className="w-80">
   <Form>
@@ -128,7 +129,7 @@ data={data.filter((item)=>{
 </Card> */}
 </div>
     </div>
-    
+    </main>
     </>
   )
 }
