@@ -388,7 +388,8 @@ body{
 
   align-items: flex-start; 
 
-   
+  width: 100%;
+  max-width: 100%;
 
   
 
@@ -396,7 +397,15 @@ body{
 
 } 
 
-  
+.dataTable-container {
+  width: 100%; /* DataTable takes up the full width of its container */
+  overflow-x: auto; /* Horizontal scrolling for overflow content */
+}
+
+.dataTable {
+  width: 100%; /* Table takes up the full width of its container */
+  table-layout: fixed; /* Optional: Fix column widths to prevent auto-resizing */
+}
 
   
 

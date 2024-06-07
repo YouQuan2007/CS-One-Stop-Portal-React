@@ -174,7 +174,8 @@ app.delete('/delete-files/:id', async(req, res) => {
 //Actions for granting and removing access
 //Grant access
 app.put('/grant-access/:id', async(req,res) => {
-
+    //import ("./models/Students.js");
+    import ("./routes/students.js");
     const {id} = req.params;
     const {email} = req.body;
 

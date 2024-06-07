@@ -82,8 +82,8 @@ const fetchData = async () => {
   return (
     <>
     <main className='main-container'>
-    <div className = "resources-container">
-    <div className="w-80">
+    <div className = "dataTable-container">
+    
   <Form>
     <InputGroup className='my-3'>
       <Form.Control 
@@ -127,7 +127,7 @@ data={data.filter((item)=>{
     </Card>
   <p></p>
 </Card> */}
-</div>
+
     </div>
     </main>
     </>

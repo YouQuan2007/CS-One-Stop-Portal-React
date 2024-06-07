@@ -11,7 +11,7 @@ const ResourcesforStudents = () => {
   const columns = [
     { name: 'Title', selector: row => row.title, sortable: true, maxWidth: '20%' },
     { name: 'File', selector: row => row.file, sortable: true, maxWidth: '20%' },
-    { name: 'Uploaded Date', selector: 'uploadedDate', sortable: true, format: row => new Date(row.uploadedDate).toLocaleDateString(), maxWidth: '20%' },
+    { name: 'Uploaded Date', selector: 'uploadedDate', sortable: true, format: row => new Date(row.uploadedDate).toLocaleDateString() },
     { name: 'Action', cell: row => <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>, maxWidth: '20%' }
   ];
 
@@ -34,7 +34,7 @@ const ResourcesforStudents = () => {
 
   return (
     <main className="main-container-resource">
-      <div className="competition-container">
+      <div className="dataTable-container">
         <Form>
           <InputGroup className="my-3">
             <Form.Control
