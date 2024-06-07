@@ -39,12 +39,13 @@ const CompetitionsforStudents = () => {
     {
         name: 'Action',
         cell: row => 
-        <>
-            <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        
+            <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>,
+            maxWidth: '20%'
+      
 
             
-        </>
+       
         
         
     }
