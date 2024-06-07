@@ -5,6 +5,11 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 dotenv.config();
+
+// import {User} from './models/userDetails.js';
+// import {Lecturers} from './models/Lecturers.js';
+// import {Students} from './models/Students.js';
+
 import { userRouter } from "./routes/user.js";
 import { lecturersRouter } from "./routes/lecturers.js";
 import { studentsRouter } from "./routes/students.js";
@@ -97,11 +102,25 @@ app.post('/upload-files', upload.single('file'), async (req, res) => {
     const title = req.body.title;
     const file = req.file.originalname; // Access the file name
     const uploadedDate = Date.now();
+    const permittedUsers = req.body.permittedUsers.split(',');
+
+    // Check if the provided emails exist in any of the databases
+    const invalidEmails = permittedUsers.filter(async (email) => {
+        //const existingUser = await User.findOne({ email });
+        const existingLecturer = await Lecturers.findOne({ email });
+        const existingStudent = await Students.findOne({ email });
+        return !existingLecturer && !existingStudent;
+      });
+  
+      if (invalidEmails.length > 0) {
+        return res.status(400).json({ error: `Invalid emails: ${invalidEmails.join(', ')}` });
+      }
 
     await resourcesSchema.create({
       title: title,
       file: file,
       uploadedDate: Date.now(),
+      permittedUsers: permittedUsers
     });
 
     res.status(200).json({ message: 'File uploaded successfully!' });
@@ -165,6 +184,14 @@ app.put('/grant-access/:id', async(req,res) => {
         if (!resource) {
             return res.status(404).json({ error: "Resource not found" });
         }
+
+        //const existingUser = await User.findOne({ email });
+        //const existingLecturer = await Lecturers.findOne({ email });
+        const existingStudent = await Students.findOne({ email });
+
+        if (!existingStudent) {
+            return res.status(404).json({ error: "Email not found in the database!" });
+        } 
 
         if (!Array.isArray(resource.permittedUsers)) {
             resource.permittedUsers = [];

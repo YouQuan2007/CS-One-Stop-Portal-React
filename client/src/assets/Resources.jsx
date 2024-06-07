@@ -14,7 +14,7 @@ const Resources = () => {
   const [file, setFile] = useState([]);
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [permittedUsers, setPermittedUsers] = useState(''); // New state for permitted users
+  //const [permittedUsers, setPermittedUsers] = useState(''); // New state for permitted users
   const columns = [
 
       {
@@ -98,7 +98,7 @@ const Resources = () => {
     formData.append('title', title);
     formData.append('file', file);
     formData.append('fileName', file.name);
-    formData.append('permittedUsers', permittedUsers);
+    //formData.append('permittedUsers', permittedUsers);
     // alert("File uploaded successfully!");
   
     try {
@@ -114,6 +114,9 @@ const Resources = () => {
   
         // Update the frontend state or data structure with the updated list of files
         setData(updatedFiles.data.data);
+      } else {
+        console.log("this is error", result.data.error) //Console log the error message from the backend
+        alert(result.data.error); // Display the error message from the backend
       }
 
       //const accessResult = await Axios.put(`http://localhost:5000/grant-access${row._id}`, {});
@@ -160,20 +163,19 @@ const handleDelete = row => {
 };
 
 const handleGrantAccess = row => {
-  const userEmail = prompt("Enter the email of the user to grant access");
-  if (userEmail) {
-    Axios.put(`http://localhost:5000/grant-access/${row._id}`, { userEmail })
-      .then(response => {
-        if (response.data.status) {
-          alert("Access has been granted!",response.data.status);
-          console.log("---this is response", response.data.status);
-          fetchData();
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  const email = prompt("Enter the email of the user to grant access");
+  Axios.put(`http://localhost:5000/grant-access/${row._id}`, { email })
+  .then(response => {
+    if (email){
+      if (response.data.status){
+        alert(response.data.status);
+        fetchData();
+    }
   }
+}).catch(err => {
+    console.log(err);
+    console.log("this is error", err.response.data.error);
+  });
 };
 
 const handleRemoveAccess = row => {
@@ -208,10 +210,10 @@ const handleRemoveAccess = row => {
                 onChange = {(e) => setFile(e.target.files[0])} 
                 autoComplete="off" required/>
 
-          <label htmlFor="permittedUsers">Permitted Users (comma-separated emails):</label>
+          {/* <label htmlFor="permittedUsers">Permitted Users (comma-separated emails):</label>
           <input type="text" className="form-control" placeholder="Enter emails separated by commas"
             onChange={(e) => setPermittedUsers(e.target.value)}
-            autoComplete="off" required />
+            autoComplete="off" required /> */}
 
           <p></p>
                 
