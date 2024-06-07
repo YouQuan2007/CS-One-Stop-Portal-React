@@ -25,6 +25,7 @@ const RegisterAsStudents = () => {
                 }
                 console.log(response)
             }).catch((err) => {
+                alert("Sign up failed!")
                 console.log("this is",err)
             })  
 

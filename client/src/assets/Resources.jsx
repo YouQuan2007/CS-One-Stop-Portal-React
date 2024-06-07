@@ -49,7 +49,7 @@ const Resources = () => {
       // },
       {
           name: 'Action',
-          //maxwidth: '80%',
+          //maxwidth: '200%',
           cell: row => 
           <>
               <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>
@@ -119,7 +119,6 @@ const Resources = () => {
         alert(result.data.error); // Display the error message from the backend
       }
 
-      //const accessResult = await Axios.put(`http://localhost:5000/grant-access${row._id}`, {});
       
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -244,7 +243,8 @@ const handleRemoveAccess = row => {
           : item.title.toLowerCase().includes(searchTerm.toLowerCase())
       })}
       pagination
-      fixedHeader>
+      fixedHeader
+      >
       </DataTable>
       
       </div>
