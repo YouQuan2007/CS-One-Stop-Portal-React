@@ -42,12 +42,6 @@ const CompetitionsforStudents = () => {
         
             <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>,
             maxWidth: '20%'
-      
-
-            
-       
-        
-        
     }
 
 ];

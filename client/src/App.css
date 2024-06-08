@@ -14,81 +14,51 @@
 
   
 
-.competition-container{ 
-
-  display: flex; 
-
-  flex-direction: column; 
-
-  align-items: center; 
-
-  justify-content: center; 
-
-  width: 400px; 
-
-  height: 150vh; 
-
-  padding-bottom:500px; 
-
-} 
+.competition-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding:20px;
+}
+ 
 
   
 
   
 
-.resources-container{ 
-
-  position:sticky; 
-
-  top:0; 
-
-  display: flex; 
-
-  flex-direction: column; 
-
-  align-items: center; 
-
-  justify-content: center; 
-
-  max-height:140vh; 
-
-  width: 300px; 
-
-} 
+.resources-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding:20px;
+}
 
   
 
-.sign-up-form { 
-
-  width:300px; 
-
-  padding: 20px; 
-
-  border: 1px solid #ccc; 
-
-  border-radius:8px; 
-
-  box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-
-} 
+.sign-up-form {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
 
   
 
-.resource-form{ 
-
-  width: 300px; 
-
-  padding: 30px; 
-
-  border: 1px solid #ccc; 
-
-  border-radius: 8px; 
-
-  box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-
-  margin-top: 20px; 
-
-} 
+.resource-form {
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin: 20px 0;
+}
 
   
 
@@ -380,7 +350,7 @@ body{
 
   padding: 20px 20px; 
 
-  color: rgba(255,255,255,0.95); 
+  color: black;
 
   display:flex; 
 
