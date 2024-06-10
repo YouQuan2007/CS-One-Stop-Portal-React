@@ -1,8 +1,8 @@
-//import React from 'react'
+import React from 'react'
 
 const Setting = () => {
   return (
-    <h1>Setting</h1>
+    <div>Setting</div>
   )
 }
 

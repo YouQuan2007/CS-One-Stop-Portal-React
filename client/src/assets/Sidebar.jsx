@@ -1,5 +1,5 @@
 //import React from 'react'
-import { BsClipboardDataFill } from "react-icons/bs"
+import { BsClipboardDataFill, BsFillGearFill } from "react-icons/bs"
 //import logo from '../assets/images/Logo.png'
 //import { ChevronFirst} from 'lucide-react'
 //import { SidebarItem } from './SidebarItem'
@@ -12,7 +12,6 @@ const Sidebar = () => {
             <div className='sidebar-brand'>
              CS One Stop Portal
             </div>
-            <span className='close-icon'>X</span>
         </div>
 
         <ul className='sidebar-list'>

@@ -130,7 +130,9 @@ const Competitions = () => {
             required
           />
           <p></p>
-          <button type="submit">Upload</button>
+          <div className="upload-container">
+          <button className="upload" type="submit">Upload</button>
+          </div>
           <p></p>
         </form>
       

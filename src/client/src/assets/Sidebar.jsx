@@ -28,11 +28,11 @@ const Sidebar = () => {
                 </a>
                 <p></p>
             </li>
-            <li className='sidebar-list-item'>
+            {/* <li className='sidebar-list-item'>
                 <a href='listofcompetitions'>
                     <BsClipboardDataFill className='icon'/>&nbsp; List of competitions
                 </a>
-            </li>
+            </li> */}
             <p></p>
             {/* <li className='sidebar-list-item'>
                 <a href='setting'>
