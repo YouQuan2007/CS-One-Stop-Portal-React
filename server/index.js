@@ -158,6 +158,19 @@ app.delete('/delete-files/:id', async(req, res) => {
 
 //Actions for granting and removing access
 //Grant access
+
+import ("./models/userPermissions.js");
+
+const userPermissionsSchema = new mongoose.Schema({
+
+    userId: {type: mongoose.Schema.Types.ObjectId,ref: 'students'},
+    resourceId: {type: mongoose.Schema.Types.ObjectId, ref: 'resourcesDetails'},
+    accessLevel: String,
+});
+
+const UserPermissions = mongoose.model("userPermissions", userPermissionsSchema);
+
+
 app.put('/grant-access/:id', async (req, res) => {
     const { id } = req.params;
     const { email } = req.body;

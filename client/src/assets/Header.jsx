@@ -1,5 +1,5 @@
 //import React from 'react'
-import { BsFillBellFill,BsJustify, BsArrowBarRight } from 'react-icons/bs'
+import { BsJustify, BsArrowBarRight, BsFillPersonFill } from 'react-icons/bs'
 //import { Button } from 'react-bootstrap';
 
 const handleLogout = () => {
@@ -9,16 +9,17 @@ const handleLogout = () => {
 
 }
 
-const handleNotification = () => {
-  alert('No new notifications')
-  //Need to implement new function lagi, not completed yet
-}
+// const handleNotification = () => {
+//   alert('No new notifications')
+//   //Need to implement new function lagi, not completed yet
+// }
 
 
 
 const Header = () => {
 
   const email = localStorage.getItem('email');
+  const role = localStorage.getItem('role');
   //console.log("---hello",email);
   return (
     <>
@@ -32,7 +33,7 @@ const Header = () => {
            &nbsp; Welcome, {email}!
         </div>
         <div className='header-right'>
-            <BsFillBellFill className='icon'onClick={handleNotification}/>
+          <BsFillPersonFill className='icon' /> {role}
             &nbsp;&nbsp;&nbsp;&nbsp;
             <BsArrowBarRight className='icon' onClick={handleLogout} />
             &nbsp;&nbsp;&nbsp;&nbsp;

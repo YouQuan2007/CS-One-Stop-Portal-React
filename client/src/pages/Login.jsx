@@ -33,7 +33,8 @@ const Login = () => {
                     navigate('/dashboard');
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
-                    //localStorage.setItem('role', response.data.status)
+                    localStorage.setItem('role', response.data.role)
+                    //console.log("this is role", response.data.role)
                 }
                 console.log(response)
             }).catch((err) => {
