@@ -6,13 +6,10 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 dotenv.config();
 
-// import {User} from './models/userDetails.js';
-// import {Lecturers} from './models/Lecturers.js';
-// import {Students} from './models/Students.js';
-
 import { userRouter } from "./routes/user.js";
 import { lecturersRouter } from "./routes/lecturers.js";
 import { studentsRouter } from "./routes/students.js";
+import { permissionsRouter } from './routes/permissions.js';
 import multer from 'multer';
 
 const app = express();
@@ -27,7 +24,8 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 //const MONGO_URL = "mongodb://localhost:27017/authentication";
-mongoose.connect("mongodb://localhost:27017/authentication")
+//mongoose.connect("mongodb+srv://youquan0830:Ferrodoxin00*@clusterfyp.wdfl0vg.mongodb.net/")
+mongoose.connect("mongodb://localhost:27017/authentication");
 
 
 app.listen(process.env.PORT, () => {
@@ -38,6 +36,7 @@ app.listen(process.env.PORT, () => {
 app.use("/auth", userRouter);
 app.use("/auth1", lecturersRouter);
 app.use("/auth2", studentsRouter);
+app.use("/auth3", permissionsRouter);
 app.use("/files",express.static('files'));
 app.use("/competitions",express.static('competitions'))
 const __dirname = path.resolve();
@@ -49,9 +48,6 @@ app.use(express.static(path.join(__dirname, '/client/dist')));
 
 
 //Multer: to store files in the server
-//const multer = import('multer')
-//const upload = multer({ dest: './files' })
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './files')
@@ -102,27 +98,16 @@ app.post('/upload-files', upload.single('file'), async (req, res) => {
     const title = req.body.title;
     const file = req.file.originalname; // Access the file name
     const uploadedDate = Date.now();
-    const permittedUsers = req.body.permittedUsers.split(',');
-
-    // Check if the provided emails exist in any of the databases
-    const invalidEmails = permittedUsers.filter(async (email) => {
-        //const existingUser = await User.findOne({ email });
-        const existingLecturer = await Lecturers.findOne({ email });
-        const existingStudent = await Students.findOne({ email });
-        return !existingLecturer && !existingStudent;
-      });
-  
-      if (invalidEmails.length > 0) {
-        return res.status(400).json({ error: `Invalid emails: ${invalidEmails.join(', ')}` });
-      }
+    //const uploadingUserEmail = req.body.uploadingUserEmail; // Get the uploading user's email from the request
 
     await resourcesSchema.create({
       title: title,
       file: file,
       uploadedDate: Date.now(),
-      permittedUsers: permittedUsers
+      //permittedUsers: [uploadingUserEmail] // Set the default permitted user as the uploading user
+      //permittedUsers: permittedUsers
     });
-
+    //await newResource.save();
     res.status(200).json({ message: 'File uploaded successfully!' });
   } catch (err) {
     res.status(500).json({ error: 'Internal Server Error' });
@@ -147,7 +132,7 @@ app.put('/update-files/:id', async(req, res) => {
 
     try{
         await resourcesSchema.findByIdAndUpdate({_id: req.body.id}, {title:req.body.title}).exec();
-        res.send({success:true, message: "Tile has been updated!"})
+        res.send({success:true, message: "Title has been updated!"})
 
     }catch(err){
         res.status(500).json({error: "Internal Server Error"});
@@ -173,79 +158,92 @@ app.delete('/delete-files/:id', async(req, res) => {
 
 //Actions for granting and removing access
 //Grant access
-app.put('/grant-access/:id', async(req,res) => {
-    //import ("./models/Students.js");
-    import ("./routes/students.js");
-    const {id} = req.params;
-    const {email} = req.body;
-
-    try{
-        const resource = await resourcesSchema.findById(id);
-
-        if (!resource) {
-            return res.status(404).json({ error: "Resource not found" });
-        }
-
-        //const existingUser = await User.findOne({ email });
-        //const existingLecturer = await Lecturers.findOne({ email });
-        const existingStudent = await Students.findOne({ email });
-
-        if (!existingStudent) {
-            return res.status(404).json({ error: "Email not found in the database!" });
-        } 
-
-        if (!Array.isArray(resource.permittedUsers)) {
-            resource.permittedUsers = [];
-        }
-        
-        if(!resource.permittedUsers.includes(email)){
-            resource.permittedUsers.push(email);
-            await resource.save();
-            
-
-    } 
-    res.status(200).json({status: "Access has been granted!"});
-    
-    }catch(err){
-        res.status(500).json({error: "Internal Server Error"});
-        console.log("This is error for access",err);
+app.put('/grant-access/:id', async (req, res) => {
+    const { id } = req.params;
+    const { email } = req.body;
+  
+    try {
+      // Check if the user exists in either the Lecturers or Students collection
+      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
+  
+      if (!existingUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Check if the resource exists
+      const resource = await resourcesSchema.findById(id);
+  
+      if (!resource) {
+        return res.status(404).json({ error: 'Resource not found' });
+      }
+  
+      // Create a new UserPermissions document
+      const newPermission = new newPermission({
+        userId: existingUser._id,
+        resourceId: resource._id,
+        accessLevel: 'read' // Set the access level as 'read' or 'write'
+      });
+  
+      await newPermission.save();
+  
+      res.status(200).json({ message: 'Access granted to the user!' });
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+      console.log(err);
     }
-});
-
-
-//Remove access
-app.put('/remove-access/:id', async(req,res) => {
-
-    const {id} = req.params;
-    const {email} = req.body;
-
-    try{
-        const resource = await resourcesSchema.findById(id);
-        if(resource.permittedUsers.includes(email)){
-            resource.permittedUsers = resource.permittedUsers.filter((user) => user !== email);
-            await resource.save();
-    } 
-    res.status(200).json({status: "Access has been removed!"});
-    
-    }catch(err){
-        res.status(500).json({error: "Internal Server Error"});
-        console.log(err);
+  });
+  
+  // Remove access
+  app.put('/remove-access/:id', async (req, res) => {
+    const { resourceId } = req.params;
+    const { email } = req.body;
+  
+    try {
+      // Find the user in either the Lecturers or Students collection
+      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
+  
+      if (!existingUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Remove the UserPermissions document for the given user and resource
+      await UserPermissions.findOneAndDelete({
+        userId: existingUser._id,
+        resourceId
+      });
+  
+      res.status(200).json({ message: 'Access removed' });
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+      console.log(err);
     }
-});
+  });
+
 
 //Get files filtered by access
-app.get('/get-files/:email', async(req, res) => {
-    const {email}= req.params;
-    try{
-        const resources = await resourcesSchema.find({permittedUsers: email});
-        res.status(200).json({status: "Success", data: resources});
-    }   catch(err){
-        res.status(500).json({error: "Internal Server Error"});
-        console.log(err);
+app.get('/get-files/:email', async (req, res) => {
+    const { email } = req.params;
+  
+    try {
+      // Find the user in either the Lecturers or Students collection
+      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
+  
+      if (!existingUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Find all resources where the user has permissions
+      const userPermissions = await userPermissions.find({ userId: existingUser._id });
+      const resourceIds = userPermissions.map(permission => permission.resourceId);
+  
+      const resources = await resourcesSchema.find({ _id: { $in: resourceIds } });
+  
+      res.status(200).json({ status: 'Success', data: resources });
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+      console.log(err);
     }
-
-
-});
+  });
 
 
 //CRUD actions for competitions

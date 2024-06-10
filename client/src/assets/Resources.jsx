@@ -117,10 +117,10 @@ const Resources = () => {
   const handleGrantAccess = row => {
     const email = prompt("Enter the email of the user to grant access");
     if (email) {
-      Axios.put(`http://localhost:5000/grant-access/${row._id}`, { email })
+      Axios.put(`http://localhost:5000/auth3/grant-access/${row._id}`, { email })
         .then(response => {
-          if (response.data.status) {
-            alert(response.data.status);
+          if (response.data.message) {
+            alert(response.data.message);
             fetchData();
           }
         }).catch(err => {
@@ -128,11 +128,11 @@ const Resources = () => {
         });
     }
   };
-
+  
   const handleRemoveAccess = row => {
     const userEmail = prompt("Enter the email of the user to remove access");
     if (userEmail) {
-      Axios.put(`http://localhost:5000/remove-access/${row._id}`, { userEmail })
+      Axios.put(`http://localhost:5000/auth3/remove-access/${row._id}`, { email: userEmail })
         .then(response => {
           if (response.data.message) {
             alert(response.data.message);
@@ -179,7 +179,7 @@ const Resources = () => {
               : item.title.toLowerCase().includes(searchTerm.toLowerCase())
           })}
           pagination
-          fixedHeader
+          
         >
         </DataTable>
       </div>
