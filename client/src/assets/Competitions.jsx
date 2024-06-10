@@ -58,6 +58,10 @@ const Competitions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) {
+      alert('Please select a valid image file.');
+      return;
+    }
     const formData = new FormData();
     formData.append('file', file);
     formData.append('description', description);
@@ -67,7 +71,9 @@ const Competitions = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
   
-      if (result.status === 200) {
+      
+      
+    if (result.status === 200) {
         alert(result.data.message);
         const updatedFiles = await Axios.get('http://localhost:5000/get-competitions');
         setData(updatedFiles.data.data);
@@ -76,6 +82,19 @@ const Competitions = () => {
       console.error('Error uploading file:', error);
     }
   }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    
+    if (file && validImageTypes.includes(file.type)) {
+      setFile(file);
+    } else {
+      alert('Only image files (PNG, JPEG, JPG) are allowed.');
+      e.target.value = ''; // Clear the input
+    }
+  };
+  
 
   const handleView = row => {
     window.open(`http://localhost:5000/competitions/${row.file}`, '_blank');
@@ -117,8 +136,8 @@ const Competitions = () => {
           <input
             type="file"
             className="form-control"
-            accept="application/image/*"
-            onChange={(e) => setFile(e.target.files[0])}
+            accept="image/png, image/jpeg, image/jpg"
+            onChange={(e) => handleFileChange(e)}
             autoComplete="off"
             required
           />

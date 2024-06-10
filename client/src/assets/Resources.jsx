@@ -114,6 +114,8 @@ const Resources = () => {
     });
   };
 
+
+  //Need to modify the function lagi
   const handleGrantAccess = row => {
     const email = prompt("Enter the email of the user to grant access");
     if (email) {
