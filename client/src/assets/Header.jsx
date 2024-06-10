@@ -33,7 +33,7 @@ const Header = () => {
            &nbsp; Welcome, {email}!
         </div>
         <div className='header-right'>
-          <BsFillPersonFill className='icon' /> {role}
+            <BsFillPersonFill className='icon' /> {role}
             &nbsp;&nbsp;&nbsp;&nbsp;
             <BsArrowBarRight className='icon' onClick={handleLogout} />
             &nbsp;&nbsp;&nbsp;&nbsp;
