@@ -88,16 +88,18 @@ const fetchData = async () => {
       onSubmit={fetchData} />
     </InputGroup>
   </Form>
-<DataTable
-columns={columns} 
-data={data.filter((item)=>{
-  return searchTerm.toLowerCase() === ''
-  ? item
-  : item.description.toLowerCase().includes(searchTerm.toLowerCase())
-})}
-pagination
-fixedHeader>
-</DataTable>
+  <DataTable
+        columns={columns}
+        data={data.filter((item) => {
+        const normalizedSearchTerm = searchTerm?.toLowerCase() || ''; // Ensure searchTerm is a string
+        const normalizedDescription = item.description?.toLowerCase() || ''; // Ensure item.description is a string
+    
+        return normalizedSearchTerm === ''
+        ? item
+        : normalizedDescription.includes(normalizedSearchTerm);
+        })}
+        pagination
+/>
 
 {/* <Card 
 data={data.filter((item)=>{
