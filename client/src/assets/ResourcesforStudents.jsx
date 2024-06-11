@@ -49,8 +49,6 @@ const ResourcesforStudents = () => {
           columns={columns}
           data={data.filter(item => searchTerm.toLowerCase() === '' ? item : item.title.toLowerCase().includes(searchTerm.toLowerCase()))}
           pagination
-          fixedHeader
-          className="data-table-wrapper"
         />
       </div>
     </main>
