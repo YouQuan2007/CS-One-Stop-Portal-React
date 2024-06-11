@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import DataTable from 'react-data-table-component';
 import { Form, InputGroup, Modal, Button } from 'react-bootstrap';
 import Select from 'react-select';
+//import { set } from 'mongoose';
 
 const Competitions = () => {
   const [file, setFile] = useState([]);
@@ -15,7 +16,13 @@ const Competitions = () => {
   const [selectedEmails, setSelectedEmails] = useState([]);
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
   const [currentRow, setCurrentRow] = useState(null);
+  const [newDescription, setNewDescription] = useState('');
+
+  // State for general purpose modal
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const columns = [
     {
@@ -111,9 +118,13 @@ const Competitions = () => {
       });
 
       if (result.status === 200) {
-        alert(result.data.message);
+        setAlertMessage(result.data.message);
+        setShowAlertModal(true);
         const updatedFiles = await Axios.get('http://localhost:5000/get-competitions');
         setData(updatedFiles.data.data);
+      } else {
+        setAlertMessage(result.data.error);
+        setShowAlertModal(true);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -136,27 +147,51 @@ const Competitions = () => {
     window.open(`http://localhost:5000/competitions/${row.file}`, '_blank');
   };
 
+  // const handleEdit = row => {
+  //   const newDescription = prompt("Enter new description", row.description);
+  //   if (row.description) {
+  //     Axios.put(`http://localhost:5000/update-competitions/${row._id}`,
+  //       { id: row._id, description: newDescription })
+  //       .then((response) => {
+  //         if (response.data.success) {
+  //           alert("Description has been updated!");
+  //           localStorage.setItem('description', newDescription);
+  //           fetchData();
+  //         }
+  //       }).catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // };
+
   const handleEdit = row => {
-    const newDescription = prompt("Enter new description", row.description);
-    if (row.description) {
-      Axios.put(`http://localhost:5000/update-competitions/${row._id}`,
-        { id: row._id, description: newDescription })
-        .then((response) => {
-          if (response.data.success) {
-            alert("Description has been updated!");
-            localStorage.setItem('description', newDescription);
-            fetchData();
-          }
-        }).catch((err) => {
-          console.log(err);
-        });
-    }
+
+    setCurrentRow(row);
+    setNewDescription(row.description); //Set the current description as the initial description
+    setShowEditModal(true); //Show the edit modal
+  };
+
+  const handleEditSubmit = row => {
+
+    Axios.put(`http://localhost:5000/update-competitions/${row._id}`,
+      { id: currentRow._id, description: newDescription })
+      .then((response) => {
+        if (response.data.success) {
+          setAlertMessage("Description has been updated!");
+          setShowAlertModal(true);
+          fetchData();
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    setShowEditModal(false);
   };
 
   const handleDelete = row => {
     Axios.delete(`http://localhost:5000/delete-competitions/${row._id}`).then((response) => {
       if (response.data.status) {
-        alert("Data has been deleted!");
+        setAlertMessage("Data has been deleted!");
+        setShowAlertModal(true);
         fetchData();
       }
     }).catch((err) => {
@@ -264,6 +299,29 @@ const Competitions = () => {
        
       </div>
 
+      {/* Edit Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Description</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input
+            type="text"
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleEditSubmit}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
       <Modal show={showGrantModal} onHide={() => setShowGrantModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Grant Access</Modal.Title>
@@ -304,6 +362,21 @@ const Competitions = () => {
           </Button>
           <Button variant="primary" onClick={handleRemoveAccessSubmit}>
             Remove Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* General purpose modal */}
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Alert</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{alertMessage}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAlertModal(false)}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

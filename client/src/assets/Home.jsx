@@ -1,6 +1,7 @@
 //import React from 'react'
 import { BsPeopleFill } from "react-icons/bs"
 import Card from 'react-bootstrap/Card'
+import './Home.css'
 //import Button from 'react-bootstrap/Button'
 //import { LineChart, Line, BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 const Home = () => {

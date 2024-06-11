@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import DataTable from 'react-data-table-component';
 import { Form, InputGroup, Modal, Button } from 'react-bootstrap';
 import Select from 'react-select';
-//import { set } from 'mongoose';
 
 const Resources = () => {
   const [title, setTitle] = useState('');
@@ -15,7 +14,14 @@ const Resources = () => {
   const [selectedEmails, setSelectedEmails] = useState([]);
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
   const [currentRow, setCurrentRow] = useState(null);
+  const [newTitle, setNewTitle] = useState(''); // New state for new title
+
+
+  // State for general purpose modal
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const columns = [
     {
@@ -69,17 +75,12 @@ const Resources = () => {
   };
 
   const fetchRoles = async () => {
-    
     try {
       const roles = [
         { value: 'lecturers', label: 'Lecturers' },
         { value: 'students', label: 'Students' }
       ];
-
-    // Assuming setRoles is a state setter function
-    setRoles(roles);
-
-
+      setRoles(roles);
     } catch (err) {
       console.log("Error fetching roles", err);
     }
@@ -98,11 +99,13 @@ const Resources = () => {
       });
 
       if (result.status === 200) {
-        alert(result.data.message);
+        setAlertMessage(result.data.message);
+        setShowAlertModal(true);
         const updatedFiles = await Axios.get('http://localhost:5000/get-files');
         setData(updatedFiles.data.data);
       } else {
-        alert(result.data.error);
+        setAlertMessage(result.data.error);
+        setShowAlertModal(true);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -113,25 +116,47 @@ const Resources = () => {
     window.open(`http://localhost:5000/files/${row.file}`);
   };
 
+  // const handleEdit = row => {
+  //   const newTitle = prompt("Enter new title", row.title);
+  //   if (newTitle) {
+  //     Axios.put(`http://localhost:5000/update-files/${row._id}`, { id: row._id, title: newTitle })
+  //       .then((response) => {
+  //         if (response.data.success) {
+  //           setAlertMessage("Title has been updated!");
+  //           setShowAlertModal(true);
+  //           fetchData();
+  //         }
+  //       }).catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // };
+
   const handleEdit = row => {
-    const newTitle = prompt("Enter new title", row.title);
-    if (newTitle) {
-      Axios.put(`http://localhost:5000/update-files/${row._id}`, { id: row._id, title: newTitle })
-        .then((response) => {
-          if (response.data.success) {
-            alert("Title has been updated!");
-            fetchData();
-          }
-        }).catch((err) => {
-          console.log(err);
-        });
-    }
+    setCurrentRow(row);
+    setNewTitle(row.title); // Set the current title as the initial value
+    setShowEditModal(true); // Show the edit modal
+  };
+
+  const handleEditSubmit = row => {
+    Axios.put(`http://localhost:5000/update-files/${row._id}`, { id: currentRow._id, title: newTitle })
+      .then((response) => {
+        if (response.data.success) {
+          setAlertMessage("Title has been updated!");
+          setShowAlertModal(true);
+          fetchData();
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    setShowEditModal(false); // Hide the edit modal after submission
   };
 
   const handleDelete = row => {
     Axios.delete(`http://localhost:5000/delete-files/${row._id}`).then((response) => {
       if (response.data.status) {
-        alert("Data has been deleted!");
+        setAlertMessage("Data has been deleted!");
+        setShowAlertModal(true);
         fetchData();
       }
     }).catch((err) => {
@@ -151,36 +176,40 @@ const Resources = () => {
 
   const handleGrantAccessSubmit = async () => {
     if (selectedEmails.length > 0) {
-      const roles = selectedEmails.map(role => role.value);
+      const emails = selectedEmails.map(email => email.value);
       try {
-        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, { roles });
+        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, { email: emails[0] }); // Assuming single email selection
         if (response.data.message) {
-          alert(response.data.message);
+          setAlertMessage(response.data.message);
+          setShowAlertModal(true);
           fetchData();
         }
       } catch (err) {
         console.log(err);
       }
     } else {
-      alert("Please select at least one role");
+      setAlertMessage("Please select at least one email");
+      setShowAlertModal(true);
     }
     setShowGrantModal(false);
   };
 
   const handleRemoveAccessSubmit = async () => {
     if (selectedEmails.length > 0) {
-      const roles = selectedEmails.map(role => role.value);
+      const emails = selectedEmails.map(email => email.value);
       try {
-        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, { roles });
+        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, { email: emails[0] }); // Assuming single email selection
         if (response.data.message) {
-          alert(response.data.message);
+          setAlertMessage(response.data.message);
+          setShowAlertModal(true);
           fetchData();
         }
       } catch (err) {
         console.log(err);
       }
     } else {
-      alert("Please select at least one role");
+      setAlertMessage("Please select at least one email");
+      setShowAlertModal(true);
     }
     setShowRemoveModal(false);
   };
@@ -227,13 +256,38 @@ const Resources = () => {
         </DataTable>
       </div>
 
+
+      {/* Edit Modal */}
+
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input
+            type="text"
+            className="form-control"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            required
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => handleEditSubmit(currentRow)}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      
       <Modal show={showGrantModal} onHide={() => setShowGrantModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Grant Access</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Select
-            isMulti
             options={roles}
             onChange={setSelectedEmails}
             className="mb-3"
@@ -255,7 +309,6 @@ const Resources = () => {
         </Modal.Header>
         <Modal.Body>
           <Select
-            isMulti
             options={roles}
             onChange={setSelectedEmails}
             className="mb-3"
@@ -267,6 +320,21 @@ const Resources = () => {
           </Button>
           <Button variant="primary" onClick={handleRemoveAccessSubmit}>
             Remove Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* General Purpose Alert Modal */}
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Alert</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {alertMessage}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowAlertModal(false)}>
+            OK
           </Button>
         </Modal.Footer>
       </Modal>
