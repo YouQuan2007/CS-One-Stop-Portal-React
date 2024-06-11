@@ -159,7 +159,7 @@ app.delete('/delete-files/:id', async(req, res) => {
 //Actions for granting and removing access
 //Grant access
 
-import ("./models/userPermissions.js");
+import ("./models/UsersPermissions.js");
 
 const userPermissionsSchema = new mongoose.Schema({
 

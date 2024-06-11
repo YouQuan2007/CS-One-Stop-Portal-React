@@ -6,6 +6,6 @@ const UserPermissionsSchema = new mongoose.Schema({
     accessLevel: { type: String, enum: ['read', 'write'], required: true, default: 'read' }
   });
   
-  const UserPermissionsModel = mongoose.model('UserPermissions', UserPermissionsSchema);
+  const UserPermissionsModel = mongoose.model("UserPermissions", UserPermissionsSchema);
 
   export { UserPermissionsModel as UserPermissions }

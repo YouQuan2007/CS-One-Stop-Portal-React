@@ -117,9 +117,9 @@ const Resources = () => {
 
   //Need to modify the function lagi
   const handleGrantAccess = row => {
-    const email = prompt("Enter the email of the user to grant access");
-    if (email) {
-      Axios.put(`http://localhost:5000/auth3/grant-access/${row._id}`, { email })
+    const userEmail = prompt("Enter the email of the user to grant access");
+    if (userEmail) {
+      Axios.put(`http://localhost:5000/auth3/grant-access/${row._id}`, { email: userEmail })
         .then(response => {
           if (response.data.message) {
             alert(response.data.message);
