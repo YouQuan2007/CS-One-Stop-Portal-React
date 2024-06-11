@@ -120,6 +120,7 @@ app.get('/get-files', async(req, res) => {
    try{
     resourcesSchema.find({}).then((data) => {
         res.status(200).json({ status: "Success", data: data});
+        //console.log("---this is 222", data)
     });
 
    }catch(err){
@@ -154,6 +155,9 @@ app.delete('/delete-files/:id', async(req, res) => {
     }
 
 })
+
+
+
 
 
 //Actions for granting and removing access
@@ -234,29 +238,29 @@ app.put('/grant-access/:id', async (req, res) => {
 
 
 //Get files filtered by access
-app.get('/get-files/:email', async (req, res) => {
-    const { email } = req.params;
+// app.get('/get-files/:email', async (req, res) => {
+//     const { email } = req.params;
   
-    try {
-      // Find the user in either the Lecturers or Students collection
-      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
+//     try {
+//       // Find the user in either the Lecturers or Students collection
+//       const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
   
-      if (!existingUser) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+//       if (!existingUser) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
   
-      // Find all resources where the user has permissions
-      const userPermissions = await userPermissions.find({ userId: existingUser._id });
-      const resourceIds = userPermissions.map(permission => permission.resourceId);
+//       // Find all resources where the user has permissions
+//       const userPermissions = await userPermissions.find({ userId: existingUser._id });
+//       const resourceIds = userPermissions.map(permission => permission.resourceId);
   
-      const resources = await resourcesSchema.find({ _id: { $in: resourceIds } });
+//       const resources = await resourcesSchema.find({ _id: { $in: resourceIds } });
   
-      res.status(200).json({ status: 'Success', data: resources });
-    } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
-      console.log(err);
-    }
-  });
+//       res.status(200).json({ status: 'Success', data: resources });
+//     } catch (err) {
+//       res.status(500).json({ error: 'Internal Server Error' });
+//       console.log(err);
+//     }
+//   });
 
 
 //CRUD actions for competitions
@@ -387,6 +391,18 @@ app.post("/register-as-Lecturers", async (req, res) => {
     }
 });
 
+// app.get('/get-roles', async(req, res) => {
+//   try{
+//     Lecturers.find({}).then((data) => {
+//       res.status(200).json({ status: "Success", data: data});
+//     });
+
+//   }catch(err){
+//       res.status(500).json({error: "Internal Server Error"});
+//       console.log(err);
+//   }
+// })  
+
 // Path for Students 
 import ("./models/Students.js");
 
@@ -416,6 +432,22 @@ app.post("/register-as-Students", async (req, res) => {
         console.log(err);
     }
 });
+
+//API endpoints to get roles in database
+// app.get('/get-roles', async(req, res) => {
+//     try{
+//       Students.find({}).then((data) => {
+//         res.status(200).json({ status: "Success", data: data});
+//         console.log("---this is 111", data);
+//       });
+      
+
+//     }catch(err){
+//         res.status(500).json({error: "Internal Server Error"});
+//         console.log(err);
+//     }
+// })  
+
 
 // Visits counter
 import("./models/visits.js");

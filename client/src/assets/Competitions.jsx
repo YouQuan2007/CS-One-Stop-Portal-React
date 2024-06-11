@@ -1,58 +1,97 @@
 import Axios from 'axios';
-import { useEffect, useState } from 'react'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import DataTable from 'react-data-table-component';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form, InputGroup, Modal, Button } from 'react-bootstrap';
+import Select from 'react-select';
 
 const Competitions = () => {
   const [file, setFile] = useState([]);
-  const [description, setDescription] = useState('')
-  const [data, setData] = useState([])
+  const [description, setDescription] = useState('');
+  const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [roles, setRoles] = useState([]);
+  //const [emails, setEmails] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [showGrantModal, setShowGrantModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   const columns = [
     {
-        name: 'File',
-        selector: row => row.file,
-        sortable: true,
-        maxWidth: '20%'
+      name: 'File',
+      selector: row => row.file,
+      sortable: true,
+      maxWidth: '20%'
     },
     {
-        name: 'Description',
-        selector: row => row.description,
-        sortable: true,
-        maxWidth: '20%'
+      name: 'Description',
+      selector: row => row.description,
+      sortable: true,
+      maxWidth: '20%'
     },
     {
-        name: 'Uploaded Date',
-        selector: 'uploadedDate',
-        sortable: true,
-        format: row => new Date(row.uploadedDate).toLocaleString().split(',')[0],
-        maxWidth: '20%'
+      name: 'Uploaded Date',
+      selector: 'uploadedDate',
+      sortable: true,
+      format: row => new Date(row.uploadedDate).toLocaleString().split(',')[0],
+      maxWidth: '20%'
     },
     {
-        name: 'Action',
-        cell: row => 
+      name: 'Action',
+      cell: row =>
         <>
-            <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row)}>Edit</button>
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>Delete</button>
+          <button className="btn btn-primary btn-sm" onClick={() => handleView(row)}>View</button>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row)}>Edit</button>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>Delete</button>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <button className="btn btn-success btn-sm" onClick={() => handleGrantAccess(row)}>Grant Access</button>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <button className="btn btn-secondary btn-sm" onClick={() => handleRemoveAccess(row)}>Remove Access</button>
         </>
     }
   ];
 
   useEffect(() => {
     fetchData();
+    fetchRoles();
+    //fetchEmails();
   }, []);
 
   const fetchData = async () => {
-    try{
+    try {
       const result = await Axios.get('http://localhost:5000/get-competitions');
       setData(result.data.data);
-    } catch(err){
+    } catch (err) {
       console.log("Hello this is error", err);
+    }
+  };
+
+  // const fetchEmails = async () => {
+  //   try {
+  //     const result = await Axios.get('http://localhost:5000/get-emails');
+  //     setEmails(result.data.emails.map(email => ({ value: email, label: email })));
+  //   } catch (err) {
+  //     console.log("Error fetching emails", err);
+  //   }
+  // };
+
+  const fetchRoles = async () => {
+    
+    try {
+      const roles = [
+        { value: 'lecturers', label: 'Lecturers' },
+        { value: 'students', label: 'Students' }
+      ];
+
+    // Assuming setRoles is a state setter function
+    setRoles(roles);
+
+
+    } catch (err) {
+      console.log("Error fetching roles", err);
     }
   };
 
@@ -65,15 +104,13 @@ const Competitions = () => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('description', description);
-    
+
     try {
       const result = await Axios.post('http://localhost:5000/upload-competitions', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
-      
-      
-    if (result.status === 200) {
+
+      if (result.status === 200) {
         alert(result.data.message);
         const updatedFiles = await Axios.get('http://localhost:5000/get-competitions');
         setData(updatedFiles.data.data);
@@ -81,12 +118,12 @@ const Competitions = () => {
     } catch (error) {
       console.error('Error uploading file:', error);
     }
-  }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    
+
     if (file && validImageTypes.includes(file.type)) {
       setFile(file);
     } else {
@@ -94,7 +131,6 @@ const Competitions = () => {
       e.target.value = ''; // Clear the input
     }
   };
-  
 
   const handleView = row => {
     window.open(`http://localhost:5000/competitions/${row.file}`, '_blank');
@@ -102,24 +138,24 @@ const Competitions = () => {
 
   const handleEdit = row => {
     const newDescription = prompt("Enter new description", row.description);
-    if(row.description){
-      Axios.put(`http://localhost:5000/update-competitions/${row._id}`, 
-      {id: row._id, description: newDescription})
-      .then((response) => {
-        if(response.data.success){
-          alert("Description has been updated!");
-          localStorage.setItem('description', newDescription);
-          fetchData();
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
+    if (row.description) {
+      Axios.put(`http://localhost:5000/update-competitions/${row._id}`,
+        { id: row._id, description: newDescription })
+        .then((response) => {
+          if (response.data.success) {
+            alert("Description has been updated!");
+            localStorage.setItem('description', newDescription);
+            fetchData();
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
     }
   };
 
   const handleDelete = row => {
     Axios.delete(`http://localhost:5000/delete-competitions/${row._id}`).then((response) => {
-      if(response.data.status){
+      if (response.data.status) {
         alert("Data has been deleted!");
         fetchData();
       }
@@ -128,60 +164,150 @@ const Competitions = () => {
     });
   };
 
+  const handleGrantAccess = row => {
+    setCurrentRow(row);
+    setShowGrantModal(true);
+  };
+
+  const handleRemoveAccess = row => {
+    setCurrentRow(row);
+    setShowRemoveModal(true);
+  };
+
+  const handleGrantAccessSubmit = async () => {
+    if (selectedEmails.length > 0) {
+      const emails = selectedEmails.map(email => email.value);
+      try {
+        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, { emails });
+        if (response.data.message) {
+          alert(response.data.message);
+          fetchData();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Please select at least one email");
+    }
+    setShowGrantModal(false);
+  };
+
+  const handleRemoveAccessSubmit = async () => {
+    if (selectedEmails.length > 0) {
+      const emails = selectedEmails.map(email => email.value);
+      try {
+        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, { emails });
+        if (response.data.message) {
+          alert(response.data.message);
+          fetchData();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Please select at least one email");
+    }
+    setShowRemoveModal(false);
+  };
+
   return (
     <div className='main-container-resource'>
-        <form className='resource-form' onSubmit={handleSubmit}>
-          <h2>Upload competitions</h2>
-          <label htmlFor="file">Select file: (ONLY IMAGES are accepted)</label>
-          <input
-            type="file"
-            className="form-control"
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={(e) => handleFileChange(e)}
-            autoComplete="off"
-            required
-          />
-          <label htmlFor="description">Description:</label>
-          <input
-            type="description"
-            placeholder="Description"
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          <p></p>
-          <div className="upload-container">
+      <form className='resource-form' onSubmit={handleSubmit}>
+        <h2>Upload competitions</h2>
+        <label htmlFor="file">Select file: (ONLY IMAGES are accepted)</label>
+        <input
+          type="file"
+          className="form-control"
+          accept="image/png, image/jpeg, image/jpg"
+          onChange={(e) => handleFileChange(e)}
+          autoComplete="off"
+          required
+        />
+        <label htmlFor="description">Description:</label>
+        <input
+          type="description"
+          placeholder="Description"
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+        <p></p>
+        <div className="upload-container">
           <button className="upload" type="submit">Upload</button>
-          </div>
-          <p></p>
-        </form>
-      
+        </div>
+        <p></p>
+      </form>
 
-        <div className="resources-container">
-       
-       <Form>
-         <InputGroup className='my-3'>
-           <Form.Control
-             type="text"
-             placeholder="Search by Description"
-             onChange={e => setSearchTerm(e.target.value)}
-             onSubmit={fetchData}
-           />
-         </InputGroup>
-       </Form>
-       <DataTable
-         columns={columns}
-         data={data.filter((item)=>{
-           return searchTerm.toLowerCase() === ''
-           ? item
-           : item.description.toLowerCase().includes(searchTerm.toLowerCase())
-         })}
-         pagination
-         fixedHeader
-       >
-       </DataTable>
+      <div className="resources-container">
+        <Form>
+          <InputGroup className='my-3'>
+            <Form.Control
+              type="text"
+              placeholder="Search by Description"
+              onChange={e => setSearchTerm(e.target.value)}
+              onSubmit={fetchData}
+            />
+          </InputGroup>
+        </Form>
+        <DataTable
+        columns={columns}
+        data={data.filter((item) => {
+        const normalizedSearchTerm = searchTerm?.toLowerCase() || ''; // Ensure searchTerm is a string
+        const normalizedDescription = item.description?.toLowerCase() || ''; // Ensure item.description is a string
     
-   </div>
-  </div>
+        return normalizedSearchTerm === ''
+        ? item
+        : normalizedDescription.includes(normalizedSearchTerm);
+        })}
+        pagination
+/>
+
+       
+      </div>
+
+      <Modal show={showGrantModal} onHide={() => setShowGrantModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Grant Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Select
+            isMulti
+            options={roles}
+            onChange={setSelectedEmails}
+            className="mb-3"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowGrantModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleGrantAccessSubmit}>
+            Grant Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Remove Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Select
+            isMulti
+            options={roles}
+            onChange={setSelectedEmails}
+            className="mb-3"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRemoveModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleRemoveAccessSubmit}>
+            Remove Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }
 

@@ -2,13 +2,20 @@ import { useEffect, useState } from 'react';
 import Axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DataTable from 'react-data-table-component';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form, InputGroup, Modal, Button } from 'react-bootstrap';
+import Select from 'react-select';
+//import { set } from 'mongoose';
 
 const Resources = () => {
   const [title, setTitle] = useState('');
   const [file, setFile] = useState([]);
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [roles, setRoles] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [showGrantModal, setShowGrantModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   const columns = [
     {
@@ -49,6 +56,7 @@ const Resources = () => {
 
   useEffect(() => {
     fetchData();
+    fetchRoles();
   }, []);
 
   const fetchData = async () => {
@@ -60,18 +68,35 @@ const Resources = () => {
     }
   };
 
+  const fetchRoles = async () => {
+    
+    try {
+      const roles = [
+        { value: 'lecturers', label: 'Lecturers' },
+        { value: 'students', label: 'Students' }
+      ];
+
+    // Assuming setRoles is a state setter function
+    setRoles(roles);
+
+
+    } catch (err) {
+      console.log("Error fetching roles", err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', title);
     formData.append('file', file);
     formData.append('fileName', file.name);
-  
+
     try {
       const result = await Axios.post('http://localhost:5000/upload-files', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-  
+
       if (result.status === 200) {
         alert(result.data.message);
         const updatedFiles = await Axios.get('http://localhost:5000/get-files');
@@ -114,36 +139,50 @@ const Resources = () => {
     });
   };
 
-
-  //Need to modify the function lagi
   const handleGrantAccess = row => {
-    const userEmail = prompt("Enter the email of the user to grant access");
-    if (userEmail) {
-      Axios.put(`http://localhost:5000/auth3/grant-access/${row._id}`, { email: userEmail })
-        .then(response => {
-          if (response.data.message) {
-            alert(response.data.message);
-            fetchData();
-          }
-        }).catch(err => {
-          console.log(err);
-        });
-    }
+    setCurrentRow(row);
+    setShowGrantModal(true);
   };
-  
+
   const handleRemoveAccess = row => {
-    const userEmail = prompt("Enter the email of the user to remove access");
-    if (userEmail) {
-      Axios.put(`http://localhost:5000/auth3/remove-access/${row._id}`, { email: userEmail })
-        .then(response => {
-          if (response.data.message) {
-            alert(response.data.message);
-            fetchData();
-          }
-        }).catch(err => {
-          console.log(err);
-        });
+    setCurrentRow(row);
+    setShowRemoveModal(true);
+  };
+
+  const handleGrantAccessSubmit = async () => {
+    if (selectedEmails.length > 0) {
+      const roles = selectedEmails.map(role => role.value);
+      try {
+        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, { roles });
+        if (response.data.message) {
+          alert(response.data.message);
+          fetchData();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Please select at least one role");
     }
+    setShowGrantModal(false);
+  };
+
+  const handleRemoveAccessSubmit = async () => {
+    if (selectedEmails.length > 0) {
+      const roles = selectedEmails.map(role => role.value);
+      try {
+        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, { roles });
+        if (response.data.message) {
+          alert(response.data.message);
+          fetchData();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Please select at least one role");
+    }
+    setShowRemoveModal(false);
   };
 
   return (
@@ -187,6 +226,50 @@ const Resources = () => {
         >
         </DataTable>
       </div>
+
+      <Modal show={showGrantModal} onHide={() => setShowGrantModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Grant Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Select
+            isMulti
+            options={roles}
+            onChange={setSelectedEmails}
+            className="mb-3"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowGrantModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleGrantAccessSubmit}>
+            Grant Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showRemoveModal} onHide={() => setShowRemoveModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Remove Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Select
+            isMulti
+            options={roles}
+            onChange={setSelectedEmails}
+            className="mb-3"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRemoveModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleRemoveAccessSubmit}>
+            Remove Access
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
