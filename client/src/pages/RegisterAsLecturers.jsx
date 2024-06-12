@@ -43,6 +43,7 @@ const RegisterAsLecturers = () => {
             }).then((response) => {
                 if(response.data.status){
                     setAlertMessage("Sign up Successful!");
+                    alert("Sign up Successful!");
                     setShowAlertModal(true);
                     navigate('/login')
                 }else {
