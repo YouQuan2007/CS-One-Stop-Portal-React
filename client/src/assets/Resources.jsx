@@ -11,7 +11,7 @@ const Resources = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roles, setRoles] = useState([]);
-  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [selectedRoles, setSelectedRoles] = useState([]);
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
@@ -174,11 +174,12 @@ const Resources = () => {
     setShowRemoveModal(true);
   };
 
-  const handleGrantAccessSubmit = async () => {
-    if (selectedEmails.length > 0) {
-      const emails = selectedEmails.map(email => email.value);
+ const handleGrantAccessSubmit = async () => {
+    if (selectedRoles.length > 0) {
       try {
-        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, { email: emails[0] }); // Assuming single email selection
+        const response = await Axios.put(`http://localhost:5000/auth3/grant-access/${currentRow._id}`, {
+          roles: selectedRoles
+        });
         if (response.data.message) {
           setAlertMessage(response.data.message);
           setShowAlertModal(true);
@@ -188,17 +189,20 @@ const Resources = () => {
         console.log(err);
       }
     } else {
-      setAlertMessage("Please select at least one email");
+      setAlertMessage("Please select at least one role");
       setShowAlertModal(true);
     }
     setShowGrantModal(false);
-  };
+
+
+ };
 
   const handleRemoveAccessSubmit = async () => {
-    if (selectedEmails.length > 0) {
-      const emails = selectedEmails.map(email => email.value);
+    if (selectedRoles.length > 0) {
       try {
-        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, { email: emails[0] }); // Assuming single email selection
+        const response = await Axios.put(`http://localhost:5000/auth3/remove-access/${currentRow._id}`, {
+          roles: selectedRoles
+        });
         if (response.data.message) {
           setAlertMessage(response.data.message);
           setShowAlertModal(true);
@@ -208,7 +212,7 @@ const Resources = () => {
         console.log(err);
       }
     } else {
-      setAlertMessage("Please select at least one email");
+      setAlertMessage("Please select at least one role");
       setShowAlertModal(true);
     }
     setShowRemoveModal(false);
@@ -281,7 +285,7 @@ const Resources = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      
+
       <Modal show={showGrantModal} onHide={() => setShowGrantModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Grant Access</Modal.Title>
@@ -289,7 +293,7 @@ const Resources = () => {
         <Modal.Body>
           <Select
             options={roles}
-            onChange={setSelectedEmails}
+            onChange={setSelectedRoles}
             className="mb-3"
           />
         </Modal.Body>
@@ -310,7 +314,7 @@ const Resources = () => {
         <Modal.Body>
           <Select
             options={roles}
-            onChange={setSelectedEmails}
+            onChange={setSelectedRoles}
             className="mb-3"
           />
         </Modal.Body>

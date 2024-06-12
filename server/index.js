@@ -176,65 +176,48 @@ const UserPermissions = mongoose.model("userPermissions", userPermissionsSchema)
 
 
 app.put('/grant-access/:id', async (req, res) => {
-    const { id } = req.params;
-    const { email } = req.body;
-  
-    try {
-      // Check if the user exists in either the Lecturers or Students collection
-      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
-  
-      if (!existingUser) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      // Check if the resource exists
-      const resource = await resourcesSchema.findById(id);
-  
-      if (!resource) {
-        return res.status(404).json({ error: 'Resource not found' });
-      }
-  
-      // Create a new UserPermissions document
-      const newPermission = new newPermission({
-        userId: existingUser._id,
+  const { id } = req.params;
+  const { roles } = req.body;
+
+  try {
+    const resource = await resourcesSchema.findById(id);
+    if (!resource) {
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+
+    for (const role of roles) {
+      const newPermission = new UserPermissions({
         resourceId: resource._id,
-        accessLevel: 'read' // Set the access level as 'read' or 'write'
+        accessLevel: role // Assuming role contains 'read' or 'write'
       });
-  
       await newPermission.save();
-  
-      res.status(200).json({ message: 'Access granted to the user!' });
-    } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
-      console.log(err);
     }
-  });
-  
-  // Remove access
-  app.put('/remove-access/:id', async (req, res) => {
-    const { resourceId } = req.params;
-    const { email } = req.body;
-  
-    try {
-      // Find the user in either the Lecturers or Students collection
-      const existingUser = await Lecturers.findOne({ email }) || await Students.findOne({ email });
-  
-      if (!existingUser) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      // Remove the UserPermissions document for the given user and resource
+
+    res.status(200).json({ message: 'Access granted based on roles!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+    console.log(err);
+  }
+});
+
+app.put('/remove-access/:id', async (req, res) => {
+  const { id } = req.params;
+  const { roles } = req.body;
+
+  try {
+    for (const role of roles) {
       await UserPermissions.findOneAndDelete({
-        userId: existingUser._id,
-        resourceId
+        resourceId: id,
+        accessLevel: role
       });
-  
-      res.status(200).json({ message: 'Access removed' });
-    } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
-      console.log(err);
     }
-  });
+
+    res.status(200).json({ message: 'Access removed based on roles' });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+    console.log(err);
+  }
+});
 
 
 //Get files filtered by access

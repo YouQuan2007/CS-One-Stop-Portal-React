@@ -76,7 +76,7 @@ const fetchData = async () => {
 
   return (
     <>
-    <main className='main-container'>
+    <main className='main-container-resource'>
     <div className = "dataTable-container">
     
   <Form>
@@ -100,31 +100,6 @@ const fetchData = async () => {
         })}
         pagination
 />
-
-{/* <Card 
-data={data.filter((item)=>{
-  return searchTerm.toLowerCase() === ''
-  ? item
-  : item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  })} >
-  <Card.Header as="h5">Competitions</Card.Header>
-  <p></p>
-    <Card>
-  <Card.Body>
-    <Card.Title> {file} </Card.Title>
-    <Card.Text>
-      {description}
-    </Card.Text>
-    <a href="" className="btn btn-primary" onClick={handleView}>View</a>
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <a href="" className="btn btn-warning" onClick={handleEdit}>Edit</a>
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <a href="" className="btn btn-danger" onClick={handleDelete}>Delete</a>
-  </Card.Body>
-    </Card>
-  <p></p>
-</Card> */}
-
     </div>
     </main>
     </>

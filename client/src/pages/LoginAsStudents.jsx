@@ -4,18 +4,34 @@ import '../App.css'
 import Axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.png'
-import {ToastContainer, toast} from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { Modal, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+
+// AlertModal Component
+const AlertModal = ({ show, handleClose, message }) => (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Body>{message}</Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={handleClose}>
+          OK
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+  
+  AlertModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    message: PropTypes.string.isRequired,
+  };
 
 const LoginAsStudents = () => {
 
-    //const [username, setUsername] = useState('')
+    
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    // const [error, setError] = useState(false)
-    // const [loading, setLoading] = useState(false)
-    //const [showPassword, setShowPassword] = useState(false);
-
+    const [showAlertModal, setShowAlertModal] = useState(false)
+    const [alertMessage, setAlertMessage] = useState('')
     const navigate = useNavigate()
 
     //Axios.defaults.withCredentials = true;
@@ -30,32 +46,33 @@ const LoginAsStudents = () => {
                 if(response.data.status){
                     //toast.success("Login Successful!")
                     alert("Login Successful!")
+                    setAlertMessage("Login Successful!");
+                    setShowAlertModal(true);
                     navigate('/dashboardforstudents');
                     localStorage.setItem('email', email)
                     localStorage.setItem('password', password)
                     localStorage.setItem('role', response.data.role)
                     //console.log("this is role", response.data.role)
-                }
+                }else {
+                    setAlertMessage("Login Failed!");
+                    setShowAlertModal(true);
+                  }
                 console.log(response)
             }).catch((err) => {
-                toast.error("Invalid email or password!")
-                console.log("this is error",err)
+                console.log("this is error", err);
+                setAlertMessage("An error occurred. Please try again.");
+                setShowAlertModal(true);
             })  
 
     }
 
-    const notify = () => {
-        Axios.post('http://localhost:5000/auth2/login-as-students', {
-            email, 
-            password}).then(() => {
-        if(email === '' || password === ''){
-            toast.error("Please fill in all fields!")
-        
-        } else {
-            toast.success("Login Successful!")
+    const handleCloseAlert = () => {
+        setShowAlertModal(false);
+        if (alertMessage === "Login Successful!") {
+          navigate('/dashboard');
         }
-    }
-    )}
+      };
+
 
   return (
     <div className = 'sign-up-container'>
@@ -73,12 +90,18 @@ const LoginAsStudents = () => {
                 onChange = {(e) => setPassword(e.target.value)}
                 required/>
                 <p></p>
-                <button type="submit" onClick={notify}>Login</button>
-                <ToastContainer autoClose={10000}/>
+                <button type="submit">Login</button>
+                
                 <p></p>
                 <Link to ="/forgotPassword">Forgot Password?</Link>
                 <p>New user? <Link to ="/signup">Sign up here!</Link></p>
             </form>
+
+            <AlertModal
+        show={showAlertModal}
+        handleClose={handleCloseAlert}
+        message={alertMessage}
+      />
 
     </div>
     

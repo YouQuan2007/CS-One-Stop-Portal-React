@@ -3,12 +3,34 @@ import '../App.css'
 import Axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/Logo.png'
+import { Modal, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+
+// AlertModal Component
+const AlertModal = ({ show, handleClose, message }) => (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Body>{message}</Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={handleClose}>
+          OK
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
+  AlertModal.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    message: PropTypes.string.isRequired,
+  }; 
 
 const RegisterAsLecturers = () => {
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const navigate = useNavigate()
 
@@ -20,16 +42,28 @@ const RegisterAsLecturers = () => {
             password,
             }).then((response) => {
                 if(response.data.status){
+                    setAlertMessage("Sign up Successful!");
+                    setShowAlertModal(true);
                     navigate('/login')
-                    alert("Sign up successful!")
-                }
+                }else {
+                    setAlertMessage("Sign Up Failed!");
+                    setShowAlertModal(true);
+                  }
                 console.log(response)
             }).catch((err) => {
-                alert("Sign up failed!")
-                console.log(err)
+                console.log("this is error", err);
+                setAlertMessage("An error occurred. Please try again.");
+                setShowAlertModal(true);
             })  
-
+    
     }
+
+    const handleCloseAlert = () => {
+        setShowAlertModal(false);
+        if (alertMessage === "Login Successful!") {
+          navigate('/dashboard');
+        }
+      };
   return (
     <div className = 'sign-up-container'>
         <img src={logo}/>
@@ -54,6 +88,12 @@ const RegisterAsLecturers = () => {
                 <button type="submit">Sign Up</button>
                 <p>Already have an account? <Link to ="/login">Login here!</Link></p>
             </form>
+
+            <AlertModal
+        show={showAlertModal}
+        handleClose={handleCloseAlert}
+        message={alertMessage}
+      />
 
     </div>
     
