@@ -1,5 +1,5 @@
 // import React from 'react'
-import { BsPeopleFill } from "react-icons/bs"
+//import { BsPeopleFill } from "react-icons/bs"
 import Card from 'react-bootstrap/Card'
 //import Button from 'react-bootstrap/Button'
 import './Home.css'
@@ -8,7 +8,7 @@ import './Home.css'
 const Home = () => {
   return (
     <main className='main-container'>
-      <div className='main-cards'>
+      {/* <div className='main-cards'>
         <div className='card'>
           <div className='card-inner'>
             <h3>Total visitors</h3>
@@ -27,7 +27,7 @@ const Home = () => {
       </div>
 
       <p></p>
-      <p></p>
+      <p></p> */}
       <Card>
         <Card.Header as="h5">Announcements</Card.Header>
         <p></p>

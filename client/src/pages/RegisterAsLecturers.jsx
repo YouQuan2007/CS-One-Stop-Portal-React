@@ -26,7 +26,7 @@ const AlertModal = ({ show, handleClose, message }) => (
 
 const RegisterAsLecturers = () => {
 
-    const [username, setUsername] = useState('')
+    //const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showAlertModal, setShowAlertModal] = useState(false);
@@ -37,7 +37,7 @@ const RegisterAsLecturers = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         Axios.post('http://localhost:5000/auth1/register-as-Lecturers', {
-            username, 
+             
             email, 
             password,
             }).then((response) => {
@@ -71,10 +71,10 @@ const RegisterAsLecturers = () => {
         <h1>CS One Stop Portal</h1>
         <h2>Sign Up as Lecturers</h2>
             <form className = 'sign-up-form' onSubmit={handleSubmit}>
-                <label htmlFor="username">Username:</label>
+                {/* <label htmlFor="username">Username:</label>
                 <input type="text" placeholder="Username" 
                 onChange = {(e) => setUsername(e.target.value)}
-                required/>
+                required/> */}
 
                 <label htmlFor="email">Email:</label>
                 <input type="email" placeholder="Email" 
