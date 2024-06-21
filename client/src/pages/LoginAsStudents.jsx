@@ -60,7 +60,7 @@ const LoginAsStudents = () => {
                 console.log(response)
             }).catch((err) => {
                 console.log("this is error", err);
-                setAlertMessage("An error occurred. Please try again.");
+                setAlertMessage("Invalid email or password! Please try again.");
                 setShowAlertModal(true);
             })  
 

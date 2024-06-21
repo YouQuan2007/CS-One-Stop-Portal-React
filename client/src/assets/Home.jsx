@@ -3,6 +3,7 @@
 import Card from 'react-bootstrap/Card'
 //import Button from 'react-bootstrap/Button'
 import './Home.css'
+import { Button } from 'react-bootstrap'
 // import { LineChart, Line, BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Home = () => {
@@ -37,6 +38,8 @@ const Home = () => {
             <Card.Text>
               Announcement 1 details
             </Card.Text>
+
+            <Button variant="primary">Read More</Button>
             
           </Card.Body>
         </Card>
@@ -47,6 +50,8 @@ const Home = () => {
             <Card.Text>
               Announcement 2 details
             </Card.Text>
+            
+            <Button variant="primary">Read More</Button>
             
           </Card.Body>
         </Card>

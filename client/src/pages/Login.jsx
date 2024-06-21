@@ -39,6 +39,7 @@ const Login = () => {
         if (response.data.status) {
           setAlertMessage("Login Successful!");
           setShowAlertModal(true);
+          //localStorage.setItem('username', response.data.userName);
           localStorage.setItem('email', email);
           localStorage.setItem('password', password);
           localStorage.setItem('role', response.data.role);
@@ -49,7 +50,7 @@ const Login = () => {
         console.log(response);
       }).catch((err) => {
         console.log("this is error", err);
-        setAlertMessage("An error occurred. Please try again.");
+        setAlertMessage("Invalid email or password! Please try again.");
         setShowAlertModal(true);
       });
   };

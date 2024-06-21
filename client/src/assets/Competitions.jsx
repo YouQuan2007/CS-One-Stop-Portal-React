@@ -249,11 +249,11 @@ const Competitions = () => {
     <div className='main-container-resource'>
       <form className='resource-form' onSubmit={handleSubmit}>
         <h2>Upload competitions</h2>
-        <label htmlFor="file">Select file: (ONLY IMAGES are accepted)</label>
+        <label htmlFor="file">Select file: (IMAGES and PDFs are accepted)</label>
         <input
           type="file"
           className="form-control"
-          accept="image/png, image/jpeg, image/jpg"
+          accept="image/png, image/jpeg, image/jpg, application/pdf"
           onChange={(e) => handleFileChange(e)}
           autoComplete="off"
           required
